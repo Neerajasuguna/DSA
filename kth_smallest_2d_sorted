@@ -1,0 +1,39 @@
+struct module{
+    int data,x,y;
+    module(int val,int x1,int y1){
+        data=val;
+        x=x1;
+        y=y1;
+    }
+};
+struct comparator{
+bool operator()(const module &m1,const module &m2){
+return m1.data>m2.data;
+}
+};
+
+
+int kthSmallest(int mat[MAX][MAX], int n, int k)
+{
+    priority_queue<module,vector<module>,comparator>pq;
+    for(int i=0;i<n;i++)
+    pq.push(module(mat[i][0],i,0));
+    for(int i=0;i<k-1;i++){
+        auto p=pq.top();
+        pq.pop();
+        int x1=p.x;
+        int y1=p.y;
+        if(y1+1<n)
+        pq.push(module(mat[x1][y1+1],x1,y1+1));
+    }
+    auto it=pq.top();
+    int x=it.data;
+    return x;
+    
+    
+}
+
+
+
+Building a min-heap which takes O(n) time
+Heapify k times which takes O(k Logn) time.
