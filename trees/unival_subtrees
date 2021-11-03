@@ -1,0 +1,89 @@
+Brute Force
+A brute force approach is to traverse all nodes of the tree. For each node, we will calculate the number of unival subtrees recursively from the left and right subtrees of the current node, as count. Now we will check all nodes in the subtree of the current node using the either recursive or iterative method. If all the subnodes have value equals the current node value then we will increment the count.
+
+Time Complexity
+O(N^2), where N is the total number of nodes in the given binary tree.
+ 
+
+In the worst case(given binary tree is a skewed tree), for each node, we will be iterating over all elements in its subtree.
+
+Space Complexity
+O(N), where N is the total number of nodes in the given binary tree.
+
+//
+bool unival(Node *root,int x){
+	if(root==NULL)
+		return true;
+	if(root->data!=x)
+		return false;
+	
+	return (unival(root->left,x)& unival(root->right,x));
+	
+}
+void inorder(Node *root,int &count){
+	if(root){
+		inorder(root->left,count);
+		if(unival(root,root->data)){
+			count++;
+			cout<<count<<" "<<root->data<<endl;;
+		}
+		inorder(root->right,count);
+	}
+}
+int main(){
+	Node*root=new Node(5);
+	root->left=new Node(1);
+	root->right=new Node(5);
+	root->left->left=new Node(5);
+	root->left->right=new Node(5);
+	//root->right->left=new Node(60);
+	root->right->right=new Node(5);
+	int count=0;
+	inorder(root,count);
+	cout<<count<<endl;
+	return 0;
+	}
+	
+  
+  
+  Bottom-Up Approach - O(N)
+In this approach, we will count the number of unival subtrees in a bottom-up manner. This means we will calculate the count of unival subtrees from left and right subtrees and also calculate whether they are themselves unival or not. Now for each node to be visited, the tree with root as the current node is unival if and only if both the left and right subtree is unival and the values of left and right child(if exists) should also be equal to the value of the current node. So if these conditions are satisfied we will increment the total count and return this value and a true boolean value to denote the count of unival nodes and that the current node is also unival. Otherwise, we will return the total count(without incrementing) with a false boolean value denoting that the given current subtree is not unival.
+
+Time Complexity
+O(N), where N is the total number of nodes in the given binary tree.
+ 
+
+In the worst case, we will be iterating over all nodes only once.
+
+Space Complexity
+O(N), where N is the total number of nodes in the given binary tree.
+ 
+
+In the worst case, the depth of recursion can extend up to O(N). So, extra space will be required for the recursion stack.
+
+
+
+
+
+
+bool unival(BinaryTreeNode<int> *root,int &count){
+    if(root==NULL)
+        return true;
+    bool lef=unival(root->left,count);
+    bool righ=unival(root->right,count);
+    if(lef==false||righ==false)
+        return false;
+    if(root->left&&root->left->data!=root->data)
+        return false;
+        if(root->right&&root->right->data!=root->data)
+        return false;
+    count++;
+    return true;
+    
+}
+int countUnivalTrees(BinaryTreeNode<int> *root)
+{
+	int count=0;
+    unival(root,count);
+    return count;
+}
