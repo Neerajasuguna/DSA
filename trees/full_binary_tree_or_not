@@ -1,20 +1,9 @@
 Check whether a binary tree is a full binary tree or not
 
 
-For example, this binary tree is symmetric: 
 
-     1
-   /   \
-  2     2
- / \   / \
-3   4 4   3
-
-But the following is not:
-    1
-   / \
-  2   2
-   \   \
-   3    3
+A full binary tree is defined as a binary tree in which all nodes have either zero or two child nodes. 
+Conversely, there is no node in a full binary tree, which has one child node. 
  
  
  bool isFullTree (struct Node* root)
