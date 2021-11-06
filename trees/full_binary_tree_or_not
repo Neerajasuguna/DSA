@@ -1,0 +1,42 @@
+Check whether a binary tree is a full binary tree or not
+
+
+For example, this binary tree is symmetric: 
+
+     1
+   /   \
+  2     2
+ / \   / \
+3   4 4   3
+
+But the following is not:
+    1
+   / \
+  2   2
+   \   \
+   3    3
+ 
+ 
+ bool isFullTree (struct Node* root)
+{
+    // If empty tree
+    if (root == NULL)
+        return true;
+  
+    // If leaf node
+    if (root->left == NULL && root->right == NULL)
+        return true;
+  
+    // If both left and right are not NULL, and left & right subtrees
+    // are full
+    if ((root->left) && (root->right))
+        return (isFullTree(root->left) && isFullTree(root->right));
+  
+    // We reach here when none of the above if conditions work
+    return false;
+}
+
+
+
+
+Time complexity of the above code is O(n) where n is number of nodes in given binary tree.
