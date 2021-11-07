@@ -1,0 +1,66 @@
+Example 1:
+
+Input:
+        3
+      /   \
+     2     1
+Output:
+3 1 2
+Example 2:
+
+Input:
+           7
+        /     \
+       9       7
+     /  \     /   
+    8    8   6     
+   /  \
+  10   9 
+Output:
+7 7 9 8 8 6 9 10 
+ 
+
+
+
+
+
+
+vector <int> zigZagTraversal(Node* root)
+    {   
+        vector<int>v;
+        deque<Node*>q;
+        q.push_front(root);
+        int l=0;
+        while(!q.empty()){
+            int n=q.size();
+            if(l%2==0){
+                
+            for(int i=0;i<n;i++){
+                Node *curr=q.front();
+                q.pop_front();
+                v.push_back(curr->data);
+                if(curr->left)
+                q.push_back(curr->left);
+                if(curr->right)
+                q.push_back(curr->right);
+                    
+                }
+            }
+            else{
+                for(int i=0;i<n;i++){
+                Node *curr=q.back();
+                q.pop_back();
+                v.push_back(curr->data);
+                if(curr->right)
+                q.push_front(curr->right);
+                if(curr->left)
+                q.push_front(curr->left);
+                
+                    
+                }
+                
+            }
+            l++;
+        }
+       return v; 
+    }
