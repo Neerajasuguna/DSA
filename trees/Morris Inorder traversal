@@ -1,0 +1,77 @@
+
+
+
+Problem -https://leetcode.com/problems/binary-tree-inorder-traversal/
+Video Explaantion - https://www.youtube.com/watch?v=80Zug6D1_r4&list=PLgUwDviBIf0q8Hkd7bK2Bpryj2xVJk8Vk&index=39
+
+
+
+Algorithm:
+Step 1:Initialise a current to traverse the tree. Set current to the root of the Binary Tree.
+
+Step 2: While the current is not null: If the current node has no left child, print the current node's value and move to the right child ie. set the current to its right child.
+
+
+Step 3: If the current node has a left child, we find the in-order predecessor of the current node. This in-order predecessor is the rightmost node in the left subtree or the left subtree's rightmost node.
+
+          If the right child of the in-order predecessor is null:
+          
+                    Set the right child to the current node.
+                    Move to the left child (i.e., set current to its left child).
+          If the right child of the in-order predecessor is not null:
+
+                    Revert the changes made in the previous step by setting the right child as null.
+                    Print the current node's value.
+                    Move to the right child (i.e., set current to its right child).
+Repeat steps 2 and 3 until the end of the tree is reached.
+
+
+
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left),
+ * right(right) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode* root) {
+
+        TreeNode* curr = root;
+        vector<int> res;
+        if (root == NULL)
+            return res;
+        while (curr != NULL) {
+            if (curr->left == NULL) {
+                res.push_back(curr->val);
+                curr = curr->right;
+            } else {
+                TreeNode* predecessor =
+                    findinOrderPredecessor(curr->left, curr);
+                if (predecessor->right == NULL) {
+
+                    predecessor->right = curr;
+                    curr = curr->left;
+                } else {
+                    predecessor->right = NULL;
+                    res.push_back(curr->val);
+                    curr = curr->right;
+                }
+            }
+        }
+        return res;
+    }
+
+    TreeNode* findinOrderPredecessor(TreeNode* temp, TreeNode* curr) {
+        while (temp->right != NULL && temp->right != curr)
+            temp = temp->right;
+        return temp;
+    }
+};
