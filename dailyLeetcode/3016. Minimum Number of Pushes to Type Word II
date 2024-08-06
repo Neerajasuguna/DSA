@@ -1,0 +1,122 @@
+3016. Minimum Number of Pushes to Type Word II - Medium
+
+
+https://leetcode.com/problems/minimum-number-of-pushes-to-type-word-ii/description/?envType=daily-question&envId=2024-08-06
+
+Youtube solution 
+
+
+https://www.youtube.com/watch?v=xhi_c7JdDkM
+
+My solution 
+
+class Solution {
+public:
+    int minimumPushes(string word) {
+        unordered_map<char,int>mp;
+        for(auto x:word)
+        mp[x]++;
+    vector<int>freq;
+    for(auto x:mp)
+    freq.push_back(x.second);
+    sort(freq.begin(),freq.end(),greater<int>());
+    int cnt=1,res=0;
+    for(auto x:freq){
+        if(cnt<=8){
+        res+=1*x;
+        cnt++;
+        }
+        else if(cnt<=16){
+            res+=x*2;
+            cnt++;
+        }
+        else if(cnt<=24){
+            res+=3*x;
+            cnt++;
+        }
+        else{
+            res+=4*x;
+            cnt++;
+        }
+    }
+    return res;
+    }
+};
+
+
+
+
+Recommended Solution 
+
+class Solution {
+public:
+    int minimumPushes(string word) {
+        // Frequency vector to store count of each letter
+        vector<int> frequency(26, 0);
+
+        // Count occurrences of each letter
+        for (char& c : word) {
+            ++frequency[c - 'a'];
+        }
+
+        // Sort frequencies in descending order
+        sort(frequency.rbegin(), frequency.rend());
+
+        int totalPushes = 0;
+
+        // Calculate total number of presses
+        for (int i = 0; i < 26; ++i) {
+            if (frequency[i] == 0) break;
+            totalPushes += (i / 8 + 1) * frequency[i];
+        }
+
+        return totalPushes;
+    }
+};
+
+
+
+or we can use priority queue to store frequencies to get one with more frequencies
+
+
+
+
+class Solution {
+public:
+    int minimumPushes(string word) {
+        // Frequency map to store count of each letter
+        unordered_map<char, int> frequencyMap;
+
+        // Count occurrences of each letter
+        for (char& c : word) {
+            ++frequencyMap[c];
+        }
+
+        // Priority queue to store frequencies in descending order
+        priority_queue<int> frequencyQueue;
+
+        // Push all frequencies into the priority queue
+        for (const auto& entry : frequencyMap) {
+            frequencyQueue.push(entry.second);
+        }
+
+        int totalPushes = 0;
+        int index = 0;
+
+        // Calculate total number of presses
+        while (!frequencyQueue.empty()) {
+            totalPushes += (1 + (index / 8)) * frequencyQueue.top();
+            frequencyQueue.pop();
+            index++;
+        }
+
+        return totalPushes;
+    }
+};
+
+
+
+
+
+Tc - o(n)
+SC- O(1)
