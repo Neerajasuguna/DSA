@@ -1,0 +1,114 @@
+
+https://leetcode.com/problems/surrounded-regions/description/
+
+
+https://www.youtube.com/watch?v=BtdgAys4yMk
+
+
+https://takeuforward.org/graph/surrounded-regions-replace-os-with-xs/
+
+
+
+
+
+
+
+
+
+
+You are given an m x n matrix board containing letters 'X' and 'O', capture regions that are surrounded:
+
+Connect: A cell is connected to adjacent cells horizontally or vertically.
+Region: To form a region connect every 'O' cell.
+Surround: The region is surrounded with 'X' cells if you can connect the region with 'X' cells and none of the region cells are on the edge of the board.
+A surrounded region is captured by replacing all 'O's with 'X's in the input matrix board.
+
+ 
+
+Example 1:
+
+Input: board = [["X","X","X","X"],["X","O","O","X"],["X","X","O","X"],["X","O","X","X"]]
+
+Output: [["X","X","X","X"],["X","X","X","X"],["X","X","X","X"],["X","O","X","X"]]
+
+Explanation:
+
+
+In the above diagram, the bottom region is not captured because it is on the edge of the board and cannot be surrounded.
+
+Example 2:
+
+Input: board = [["X"]]
+
+Output: [["X"]]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class Solution {
+public:
+    void solve(vector<vector<char>>& board) {
+        int n=board.size();
+        int m=board[0].size();
+        queue< pair<int,int> >q;
+    vector<vector<int>>vis(n,vector<int>(m,0));
+        for(int i = 0;i<n;i++) {
+            for(int j = 0;j<m;j++) {
+                // first row, first col, last row, last col 
+                if(i == 0 || j == 0 || i == n-1 || j == m-1) {
+                    // if it is a land then store it in queue
+                    if(board[i][j] =='O') {
+                        q.push({i, j}); 
+                        vis[i][j] = 1; 
+                    }
+                }
+            }
+        }
+
+         cout<<q.size()<<endl;   
+        
+        while(!q.empty()){
+            int i=q.front().first;
+            int j=q.front().second;
+
+            q.pop();
+            int drow[]={-1,0,1,0};
+            int dcol[]={0,+1,0,-1};
+            for(int k=0;k<4;k++){
+                int nrow=i+drow[k];
+                int ncol=j+dcol[k];
+                if(nrow>0&& nrow<n && ncol>0&&ncol<m && board[nrow][ncol]=='O' && vis[nrow][ncol]==0){
+                    vis[nrow][ncol]=1;
+                    q.push({nrow,ncol});
+                }
+            }
+        }
+
+
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(vis[i][j]==0 && board[i][j]=='O')
+                board[i][j]='X';
+            }
+        }
+
+
+
+        
+    }
+};
+
+
+
+
+
