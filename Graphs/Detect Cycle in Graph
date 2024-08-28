@@ -1,0 +1,80 @@
+
+
+
+Given a Directed Graph with V vertices (Numbered from 0 to V-1) and E edges, check whether it contains any cycle or not.
+
+
+https://www.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1?utm_source=youtube&utm_medium=collab_striver_ytdescription&utm_campaign=detect-cycle-in-a-directed-graph
+
+
+
+
+Intuition - On the same path if we visit the node agin then graph has a cycle
+
+
+
+
+//{ Driver Code Starts
+#include <bits/stdc++.h>
+using namespace std;
+
+// } Driver Code Ends
+class Solution {
+    private:
+    bool dfs(int node,vector<int> adj[],bool vis[],bool samepath[]){
+        vis[node]=true;
+        samepath[node]=true;
+        for(auto it:adj[node]){
+            if(!vis[it]){
+                if(dfs(it,adj,vis,samepath)==true)
+                return true;
+            }
+            else if(samepath[it])
+            return true;
+        }
+        samepath[node]=false;
+        return false;
+    }
+  public:
+    // Function to detect cycle in a directed graph.
+    bool isCyclic(int V, vector<int> adj[]) {
+        // code here
+        
+        bool vis[V]={false};
+        bool samepath[V]={false};
+        for(int i=0;i<V;i++){
+            if(!vis[i]){
+                if (dfs(i,adj,vis,samepath)==true)
+                return true;
+            }
+        }
+        return false;
+    }
+};
+
+//{ Driver Code Starts.
+
+int main() {
+
+    int t;
+    cin >> t;
+    while (t--) {
+        int V, E;
+        cin >> V >> E;
+
+        vector<int> adj[V];
+
+        for (int i = 0; i < E; i++) {
+            int u, v;
+            cin >> u >> v;
+            adj[u].push_back(v);
+        }
+
+        Solution obj;
+        cout << obj.isCyclic(V, adj) << "\n";
+    }
+
+    return 0;
+}
+
+// } Driver Code Ends
