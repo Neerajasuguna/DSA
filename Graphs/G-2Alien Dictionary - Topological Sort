@@ -1,0 +1,105 @@
+problem link - https://www.geeksforgeeks.org/problems/alien-dictionary/1?utm_source=youtube&utm_medium=collab_striver_ytdescription&utm_campaign=alien-dictionary
+
+
+notes- https://takeuforward.org/data-structure/alien-dictionary-topological-sort-g-26/
+
+video solution - https://www.youtube.com/watch?v=U3N_je7tWAs 
+
+
+
+
+
+
+
+
+The follow-up question for the interview:
+
+When is the ordering not possible?
+There are two such cases when ordering is not possible:
+If every character matches and the largest word appears before the shortest word: For example, if “abcd” appears before “abc”, we can say the ordering is not possible.
+If there exists a cyclic dependency between the characters: For example, in the dictionary: dict: {“abc”, “bat”, “ade”} there exists a cyclic dependency between ‘a’ and ‘b’ because the dictionary states ‘a’ < ‘b’ < ‘a’, which is not possible.
+
+
+
+
+
+
+class Solution {
+public:
+    string findOrder(string dict[], int n, int k) {
+        vector<int> adj[k];
+        for(int i = 0; i < n-1; i++) {
+            string a = dict[i];
+            string b = dict[i+1];
+            int l = 0, m = 0;
+            while (l < a.size() && m < b.size() && a[l] == b[m]) {
+                l++;
+                m++;
+            }
+            // If l and m are within bounds, add edge a[l] -> b[m]
+            if (l < a.size() && m < b.size()) {
+                adj[a[l] - 'a'].push_back(b[m] - 'a');
+            }
+        }
+        
+        vector<int> indegree(k, 0);
+        for(int i = 0; i < k; i++) {
+            for(auto it : adj[i]) {
+                indegree[it]++;
+            }
+        }
+
+        queue<int> q;
+        for(int i = 0; i < k; i++) {
+            if(indegree[i] == 0) {
+                q.push(i);
+            }
+        }
+        
+        string res;
+        while(!q.empty()) {
+            int node = q.front();
+            q.pop();
+            res += node + 'a';
+            for(auto it : adj[node]) {
+                indegree[it]--;
+                if(indegree[it] == 0) q.push(it);
+            }
+        }
+
+        // Check if the result contains all characters
+        if (res.size() < k) {
+            return ""; // If not, there was a cycle or some characters were not connected
+        }
+
+        return res;
+    }
+};
+
+
+
+
+
+building of adj list can also be done like this 
+
+for(int i = 0; i < n-1; i++) {
+            string a = dict[i];
+            string b = dict[i+1];
+       int len = min(a.size(),b.size());
+       for(int p=0;p<len;p++)
+       {
+       if(a[p]!=b[p])
+              adj[a[l] - 'a'].push_back(b[m] - 'a');
+            }
+        }
+
+
+
+
+
+
+
+
+Time Complexity: O(N*len)+O(K+E), where N is the number of words in the dictionary, ‘len’ is the length up to the index where the first inequality occurs, K = no. of nodes, and E = no. of edges.
+
+Space Complexity: O(K) + O(K)+O(K)+O(K) ~ O(4K), O(K) for the indegree array, and O(K) for the queue data structure used in BFS(where K = no.of nodes), O(K) for the answer array and O(K) for the adjacency list used in the algorithm.
