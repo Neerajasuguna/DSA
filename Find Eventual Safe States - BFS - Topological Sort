@@ -1,0 +1,90 @@
+
+problem link- https://www.geeksforgeeks.org/problems/eventual-safe-states/1?utm_source=youtube&utm_medium=collab_striver_ytdescription&utm_campaign=eventual-safe-states
+
+notes- https://takeuforward.org/data-structure/find-eventual-safe-states-bfs-topological-sort-g-25/
+
+
+
+Intuition
+
+
+Initially the terminal nodes are those who have outdegree 0 
+but after reversal the terminal nodes becomes those which have indegree 0 
+so we can apply Kahn's algo to find all the nodes connected to it  which have linear dependency on the terminal node or is on the path which leads to terminal node 
+so if the nodes is a part of a cycle or points to a cycle , that path cannot lead to terminal node as each node in that  path will have cyclic dependency
+
+
+
+
+
+
+
+
+
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+
+class Solution {
+public:
+	vector<int> eventualSafeNodes(int V, vector<int> adj[]) {
+		vector<int> adjRev[V];
+		int indegree[V] = {0};
+		for (int i = 0; i < V; i++) {
+			// i -> it
+			// it -> i
+			for (auto it : adj[i]) {
+				adjRev[it].push_back(i);
+				indegree[i]++;
+			}
+		}
+		queue<int> q;
+		vector<int> safeNodes;
+		for (int i = 0; i < V; i++) {
+			if (indegree[i] == 0) {
+				q.push(i);
+			}
+		}
+
+		while (!q.empty()) {
+			int node = q.front();
+			q.pop();
+			safeNodes.push_back(node);
+			for (auto it : adjRev[node]) {
+				indegree[it]--;
+				if (indegree[it] == 0) q.push(it);
+			}
+		}
+
+		sort(safeNodes.begin(), safeNodes.end());
+		return safeNodes;
+	}
+};
+
+int main() {
+
+	vector<int> adj[12] = {{1}, {2}, {3, 4}, {4, 5}, {6}, {6}, {7}, {}, {1, 9}, {10},
+		{8}, {9}
+	};
+	int V = 12;
+	Solution obj;
+	vector<int> safeNodes = obj.eventualSafeNodes(V, adj);
+
+	for (auto node : safeNodes) {
+		cout << node << " ";
+	}
+	cout << endl;
+
+	return 0;
+}
+
+
+
+
+Time Complexity: O(V+E)+O(N*logN), where V = no. of nodes and E = no. of edges. This is a simple BFS algorithm. Extra O(N*logN) for sorting the safeNodes array, where N is the number of safe nodes.
+
+Space Complexity: O(N) + O(N) + O(N) ~ O(3N), O(N) for the indegree array, O(N) for the queue data structure used in BFS(where N = no.of nodes), and extra O(N) for the adjacency list to store the graph in a reversed order.
+
