@@ -1,0 +1,91 @@
+https://www.geeksforgeeks.org/problems/eventual-safe-states/1?utm_source=youtube&utm_medium=collab_striver_ytdescription&utm_campaign=eventual-safe-states
+
+
+Intuition 
+
+
+1. Any node which is part of cycle or node that has edge to any nodes in the cycle cannot be a safe node
+
+
+
+A directed graph of V vertices and E edges is given in the form of an adjacency list adj. Each node of the graph is labelled with a distinct integer in the range 0 to V - 1.
+
+A node is a terminal node if there are no outgoing edges. A node is a safe node if every possible path starting from that node leads to a terminal node.
+
+You have to return an array containing all the safe nodes of the graph. The answer should be sorted in ascending order.
+
+
+
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+// User function Template for C++
+
+class Solution {
+private:
+	bool dfsCheck(int node, vector<int> adj[], int vis[],
+ int pathVis[], 
+        int check[]) {
+		vis[node] = 1;
+		pathVis[node] = 1;
+		check[node] = 0;
+		// traverse for adjacent nodes
+		for (auto it : adj[node]) {
+			// when the node is not visited
+			if (!vis[it]) {
+			if (dfsCheck(it, adj, vis, pathVis, check) == true) {
+					check[node] = 0;
+					return true;
+				}
+
+			}
+			// if the node has been previously visited
+			// but it has to be visited on the same path
+			else if (pathVis[it]) {
+				check[node] = 0;
+				return true;
+			}
+		}
+of al dfs calls are made and we havent encountered any cycle we set check[node]=true; other wise it would have brken at either lineno 40 or 48
+		check[node] = 1;
+		pathVis[node] = 0;
+		return false;
+	}
+public:
+	vector<int> eventualSafeNodes(int V, vector<int> adj[]) {
+		int vis[V] = {0};
+		int pathVis[V] = {0};
+		int check[V] = {0};
+		vector<int> safeNodes;
+		for (int i = 0; i < V; i++) {
+			if (!vis[i]) {
+				dfsCheck(i, adj, vis, pathVis, check);
+			}
+		}
+		for (int i = 0; i < V; i++) {
+			if (check[i] == 1) safeNodes.push_back(i);
+		}
+		return safeNodes;
+	}
+};
+
+
+int main() {
+
+	//V = 12;
+	vector<int> adj[12] = {{1}, {2}, {3}, {4, 5}, {6}, {6}, {7}, {}, {1, 9}, {10}, 
+        {8},{9}};
+	int V = 12;
+	Solution obj;
+	vector<int> safeNodes = obj.eventualSafeNodes(V, adj);
+
+	for (auto node : safeNodes) {
+		cout << node << " ";
+	}
+	cout << endl;
+
+	return 0;
+}
