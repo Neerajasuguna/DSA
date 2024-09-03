@@ -1,0 +1,265 @@
+Problem Link - https://www.geeksforgeeks.org/problems/implementing-dijkstra-set-1-adjacency-matrix/1?utm_source=youtube&utm_medium=collab_striver_ytdescription&utm_campaign=implementing-dijkstra-set-1-adjacency-matrix
+
+Notes- https://takeuforward.org/data-structure/dijkstras-algorithm-using-priority-queue-g-32/
+https://takeuforward.org/data-structure/dijkstras-algorithm-using-set-g-33/
+
+
+Approach:
+We’ll be using Priority Queue in this approach for finding the shortest distances from the source node to every other node through Dijkstra’s Algorithm.
+
+Initial configuration:
+
+Source Node: Before starting off with the Algorithm, we need to define a source node from which the shortest distances to every other node would be calculated.
+Priority Queue: Define a Priority Queue which would contain pairs of the type {dist, node}, where ‘dist’ indicates the currently updated value of the shortest distance from the source to the ‘node’.
+Dist Array: Define a dist array initialized with a large integer number at the start indicating that the nodes are unvisited initially. This array stores the shortest distances to all the nodes from the source node.
+The Algorithm consists of the following steps :
+
+We would be using a min-heap and a distance array of size V (where ‘V’ are the number of nodes in the graph) initialized with infinity (indicating that at present none of the nodes are reachable from the source node) and initialize the distance to source node as 0.
+We push the source node to the queue along with its distance which is also 0.
+For every node at the top of the queue, we pop the element out and look out for its adjacent nodes. If the current reachable distance is better than the previous distance indicated by the distance array, we update the distance and push it into the queue.
+
+
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution
+{
+public:
+    // Function to find the shortest distance of all the vertices
+    // from the source vertex S.
+    vector<int> dijkstra(int V, vector<vector<int>> adj[], int S)
+    {
+
+        // Create a priority queue for storing the nodes as a pair {dist,node}
+        // where dist is the distance from source to the node. 
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+
+        // Initialising distTo list with a large number to
+        // indicate the nodes are unvisited initially.
+        // This list contains distance from source to the nodes.
+        vector<int> distTo(V, INT_MAX);
+
+        // Source initialised with dist=0.
+        distTo[S] = 0;
+        pq.push({0, S});
+
+        // Now, pop the minimum distance node first from the min-heap
+        // and traverse for all its adjacent nodes.
+        while (!pq.empty())
+        {
+            int node = pq.top().second;
+            int dis = pq.top().first;
+            pq.pop();
+
+            // Check for all adjacent nodes of the popped out
+            // element whether the prev dist is larger than current or not.
+            for (auto it : adj[node])
+            {
+                int v = it[0];
+                int w = it[1];
+                if (dis + w < distTo[v])
+                {
+                    distTo[v] = dis + w;
+    
+                    // If current distance is smaller,
+                    // push it into the queue.
+                    pq.push({dis + w, v});
+                }
+            }
+        }
+        // Return the list containing shortest distances
+        // from source to all the nodes.
+        return distTo;
+    }
+};
+
+int main()
+{
+    // Driver code.
+    int V = 3, E = 3, S = 2;
+    vector<vector<int>> adj[V];
+    vector<vector<int>> edges;
+    vector<int> v1{1, 1}, v2{2, 6}, v3{2, 3}, v4{0, 1}, v5{1, 3}, v6{0, 6};
+    int i = 0;
+    adj[0].push_back(v1);
+    adj[0].push_back(v2);
+    adj[1].push_back(v3);
+    adj[1].push_back(v4);
+    adj[2].push_back(v5);
+    adj[2].push_back(v6);
+
+    Solution obj;
+    vector<int> res = obj.dijkstra(V, adj, S);
+
+    for (int i = 0; i < V; i++)
+    {
+        cout << res[i] << " ";
+    }
+    cout << endl;
+    return 0;
+}
+
+
+
+
+Output: 
+
+4 3 0
+
+Time Complexity: O( E log(V) ), Where E = Number of edges and V = Number of Nodes.
+
+Space Complexity: O( |E| + |V| ), Where E = Number of edges and V = Number of Nodes.
+
+
+why we took priority queue- to get min distance
+
+To get min dis we can also use set data structure which serve the same purpose
+
+Adv of set data struture is if we encounter already visited vertex(already distence comouted vertex  it will definitely be in priority queue /set  , So If we encounter min distance to a particular node we erase the already existing 
+alrger distance values in set to reduce the iterations . here although we are saving time by reducing the iterations set.erase will take logorithmic complexity log N . 
+
+So we cnat say implenting set is better than priority queue
+Implementing Dijkstras Algo using set data structure
+
+
+
+
+
+
+
+
+
+
+#include<bits/stdc++.h>
+using namespace std;
+
+class Solution
+{
+	public:
+	  //Function to find the shortest distance of all the vertices
+    //from the source vertex S.
+    vector <int> dijkstra(int V, vector<vector<int>> adj[], int S)
+    {
+        // Create a set ds for storing the nodes as a pair {dist,node}
+        // where dist is the distance from source to the node.
+        // set stores the nodes in ascending order of the distances 
+        set<pair<int,int>> st; 
+
+        // Initialising dist list with a large number to
+        // indicate the nodes are unvisited initially.
+        // This list contains distance from source to the nodes.
+        vector<int> dist(V, 1e9); 
+        
+        st.insert({0, S}); 
+
+        // Source initialised with dist=0
+        dist[S] = 0;
+        
+        // Now, erase the minimum distance node first from the set
+        // and traverse for all its adjacent nodes.
+        while(!st.empty()) {
+            auto it = *(st.begin()); 
+            int node = it.second; 
+            int dis = it.first; 
+            st.erase(it); 
+            
+            // Check for all adjacent nodes of the erased
+            // element whether the prev dist is larger than current or not.
+            for(auto it : adj[node]) {
+                int adjNode = it[0]; 
+                int edgW = it[1]; 
+                
+                if(dis + edgW < dist[adjNode]) {
+                    // erase if it was visited previously at 
+                    // a greater cost.
+                    if(dist[adjNode] != 1e9) 
+                        st.erase({dist[adjNode], adjNode}); 
+                        
+                    // If current distance is smaller,
+                    // push it into the queue
+                    dist[adjNode] = dis + edgW; 
+                    st.insert({dist[adjNode], adjNode}); 
+                 }
+            }
+        }
+        // Return the list containing shortest distances
+        // from source to all the nodes.
+        return dist; 
+    }
+};
+
+int main()
+{
+    // Driver code.
+    int V = 3, E = 3, S = 2;
+    vector<vector<int>> adj[V];
+    vector<vector<int>> edges;
+    vector<int> v1{1, 1}, v2{2, 6}, v3{2, 3}, v4{0, 1}, v5{1, 3}, v6{0, 6};
+    int i = 0;
+    adj[0].push_back(v1);
+    adj[0].push_back(v2);
+    adj[1].push_back(v3);
+    adj[1].push_back(v4);
+    adj[2].push_back(v5);
+    adj[2].push_back(v6);
+
+    Solution obj;
+    vector<int> res = obj.dijkstra(V, adj, S);
+
+    for (int i = 0; i < V; i++)
+    {
+        cout << res[i] << " ";
+    }
+    cout << endl;
+    return 0;
+}
+
+
+
+
+
+Comparison b/w PQ and set : 
+Incase of PQ, the maximum heap size can go upto E = number of edges, leading to complexity = O(E*logE).
+Incase of set, the maximum set size can go upto V =. number of vertices, leading to complexity = O(E*logV).
+
+
+
+
+why TC is O(ElogE) for priority queue and O(ElogV) for set.
+
+Think in this manner that for priority queue , there is no way we can erase duplicate or recurring nodes, so in worst case heap will be having V*(V-1) nodes i.e  = E . and hence "logE"
+
+for set method, we will be erasing the node from the set first before inserting it with a better distance, that means even in worst case ,  we won't be having duplicate nodes. hence, at worst (hypothetically) all vertices can be present in the set (but no single vertex will be present twice) . hence maximum heap size boils down to "V'.
+that is why  "log V".
+
+
+Time Complexity Derivation for priority Queue
+
+O( V * ( pop vertex from min heap + no. of edges on each vertex * push in PQ ))
+
+O( V * ( log(heapSize) + no. of edges * log(heapSize))
+
+O( V * (log(heapSize) + V-1 * log(heapSize))    { one vertex can have V-1 edges }
+
+O( V * (log(heapSize) * (V-1+1))
+
+O( V * V * log(heapSize))
+
+Now, at the worst case the heapSize will be equivalent to v² as if we consider pushing adjacent elements of a node, at the worst case each element will have V-1 nodes and they will be pushed onto the queue.
+
+O( V * V * log(v²))
+
+O ( v² *  log (E))
+
+O ( E *  log(E))  { E= v², total number of edges}
+
+O ( E * log(E))  Worst case Time Complexity of Dijkstra’s Algorithm.
+
+
+
+Why queue is not preferred is that we explore all paths multiple times but we need mainly here is the min path which we can easily get through priority queue /set 
+
+
