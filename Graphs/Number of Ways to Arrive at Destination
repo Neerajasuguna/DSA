@@ -1,0 +1,97 @@
+problem - https://www.geeksforgeeks.org/problems/number-of-ways-to-arrive-at-destination/1?utm_source=youtube&utm_medium=collab_striver_ytdescription&utm_campaign=%2Fnumber-of-ways-to-arrive-at-destination
+
+Notes- https://takeuforward.org/data-structure/g-40-number-of-ways-to-arrive-at-destination/
+
+
+intution : 
+
+Simply execute dijkstra Algorithm and count no of ways 
+
+
+
+
+Since there can be many paths to reach a destination node from the given source node, in this problem, we have to find all those paths that are the 
+shortest in order to reach our destination. 
+
+
+
+
+
+
+
+
+
+
+below soln is giving error 
+
+
+class Solution {
+  public:
+    int countPaths(int n, vector<vector<int>>& roads) {
+        
+        vector<pair<int,int>>adj[n];
+      const int MOD = 1e9 + 7;
+     
+            for(auto it:roads){
+                adj[it[0]].push_back({it[1],it[2]});
+                adj[it[1]].push_back({it[0],it[2]});
+                
+            }
+        
+  
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq;
+
+
+        vector<pair<int, int>> dist(n, make_pair(INT_MAX, 0));
+
+
+        // Source initialised with dist=0.
+        dist[0].first = 0;
+        pq.push({0, 0});
+
+        // Now, pop the minimum distance node first from the min-heap
+        // and traverse for all its adjacent nodes.
+        while (!pq.empty())
+        {
+            int node = pq.top().second;
+            int dis = pq.top().first;
+            pq.pop();
+
+            // Check for all adjacent nodes of the popped out
+            // element whether the prev dist is larger than current or not.
+            for (auto it : adj[node])
+            {
+                int v = it.first;
+                int w = it.second;
+                if (dis + w < dist[v].first)
+                {
+                    dist[v].first = dis + w;
+                    dist[v].second = 1;
+                    
+    
+                    // If current distance is smaller,
+                    // push it into the queue.
+                    pq.push({dis + w, v});
+                }
+                else if(dis + w == dist[v].first){
+                dist[v].second=(dist[v].second+dist[node].second)%MOD;
+
+                }
+                
+            }
+    }
+    return (dist[n-1].second)%MOD;
+    }
+};
+
+
+
+
+
+Time Complexity: O( E* log(V)) { As we are using simple Dijkstra's algorithm here, the time complexity will be or the order E*log(V)}
+
+Where E = Number of edges and V = No. of vertices.
+
+Space Complexity :  O(N) { for dist array + ways array + approximate complexity for priority queue }
+
+Where, N = Number of nodes.
