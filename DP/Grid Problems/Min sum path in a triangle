@@ -1,0 +1,64 @@
+
+
+
+https://takeuforward.org/data-structure/minimum-path-sum-in-triangular-grid-dp-11/
+
+
+Recursive soln 
+
+
+int minsum(x,y,m,n){
+if(x==m-1)
+return grid[x][y];
+else
+return grid[i][j]+min(grid[i+1][j],grid[i+1][j+1];
+}
+
+top down dp solution 
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+// Function to find the minimum path sum using top-down DP approach
+int minimumPathSum(vector<vector<int>> &triangle, int n) {
+    // Create a dp table initialized with the same values as the triangle
+    vector<vector<int>> dp = triangle;
+
+    // Start from the second row and update each cell with the minimum path sum
+    for (int i = 1; i < n; i++) {
+        for (int j = 0; j <= i; j++) {
+            // If we're at the first column, we can only come from the top
+            if (j == 0) {
+                dp[i][j] += dp[i - 1][j];
+            }
+            // If we're at the last column, we can only come from the diagonal (top left)
+            else if (j == i) {
+                dp[i][j] += dp[i - 1][j - 1];
+            }
+            // For all other cells, take the minimum path from the top or the top left (diagonal)
+            else {
+                dp[i][j] += min(dp[i - 1][j], dp[i - 1][j - 1]);
+            }
+        }
+    }
+
+    // The minimum path sum will be the minimum value in the last row of the dp table
+    return *min_element(dp[n - 1].begin(), dp[n - 1].end());
+}
+
+int main() {
+    // Define the triangle as a 2D vector
+    vector<vector<int>> triangle{{1},
+                                  {2, 3},
+                                  {3, 6, 7},
+                                  {8, 9, 6, 10}};
+
+    // Get the number of rows in the triangle
+    int n = triangle.size();
+
+    // Call the minimumPathSum function and print the result
+    cout << minimumPathSum(triangle, n);
+
+    return 0;
+}
