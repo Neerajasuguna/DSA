@@ -62,3 +62,31 @@ int main() {
 
     return 0;
 }
+
+
+
+
+
+
+int minimumPathSum(vector<vector<int>> &triangle, int n) {
+    // Initialize a dp array with the first element of the triangle
+    vector<int> dp(n, 0);
+    dp[0] = triangle[0][0];  // Base case: start from the top of the triangle
+
+    // Iterate through each row starting from the second row
+    for (int i = 1; i < n; i++) {
+        // Update the DP array for the current row
+        // We must update from right to left to avoid overwriting the previous values prematurely
+        for (int j = i; j >= 0; j--) {
+            if (j == i) {
+                dp[j] = dp[j - 1] + triangle[i][j];  // Only coming from the left (diagonal up-left)
+            } else if (j == 0) {
+                dp[j] = dp[j] + triangle[i][j];  // Only coming from the top
+            } else {
+                dp[j] = min(dp[j], dp[j - 1]) + triangle[i][j];  // Min of coming from the top or the diagonal up-left
+            }
+        }
+    }
+
+    // The minimum path sum will be the minimum value in the dp array (since we reach the last row)
+   
