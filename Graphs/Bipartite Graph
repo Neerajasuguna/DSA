@@ -33,6 +33,17 @@ You don't need to read or print anything. Your task is to complete the function 
 Expected Time Complexity: O(V + E)
 Expected Space Complexity: O(V)
 
+BFS 
+
+The algorithm steps are as follows:
+
+For BFS traversal, we need a queue data structure and a visited array (in this case colour array). 
+Take the source node and push it into the Queue. Whenever we try to put it in the queue, we assign a colour to the node. We will try to colour with 0 and 1, but you can choose other colours as well. We will start with the colour 0, you can start with 1 as well, just make sure for the adjacent node, it should be opposite of what the current node has. 
+Start the BFS traversal, pop out an element from the queue every time and travel to all its uncoloured neighbours using the adjacency list. 
+For every uncoloured node, initialise it with the opposite colour to that of the current node, and push it into the Q data structure, for further traversals.
+Repeat the steps either until the queue becomes empty.
+If at any moment, we get an adjacent node from the adjacency list which is already coloured and has the same colour as the current node, we can say it is not possible to colour it, hence it cannot be bipartite. Thereby we will stop the check here, and return a false, without visiting any further nodes. 
+If the queue becomes empty, the graph is coloured and no two adjacent nodes have the same colour then return value 1 indicating it is a bipartite graph.
 
 
 #include<bits/stdc++.h>
@@ -111,5 +122,77 @@ Output:  0
 Time Complexity: O(V + 2E), Where V = Vertices, 2E is for total degrees as we traverse all adjacent nodes.
 
 Space Complexity: O(3V) ~ O(V), Space for queue data structure, colour array and an adjacency list.
+
+
+
+DFS 
+
+#include<bits/stdc++.h>
+using namespace std;
+
+class Solution {
+private: 
+    bool dfs(int node, int col, int color[], vector<int> adj[]) {
+        color[node] = col; 
+        
+        // traverse adjacent nodes
+        for(auto it : adj[node]) {
+            // if uncoloured
+            if(color[it] == -1) {
+                if(dfs(it, !col, color, adj) == false) return false; 
+            }
+            // if previously coloured and have the same colour
+            else if(color[it] == col) {
+                return false; 
+            }
+        }
+        
+        return true; 
+    }
+public:
+	bool isBipartite(int V, vector<int>adj[]){
+	    int color[V];
+	    for(int i = 0;i<V;i++) color[i] = -1; 
+	    
+	    // for connected components
+	    for(int i = 0;i<V;i++) {
+	        if(color[i] == -1) {
+	            if(dfs(i, 0, color, adj) == false) 
+	                return false; 
+	        }
+	    }
+	    return true; 
+	}
+};
+
+void addEdge(vector <int> adj[], int u, int v) {
+    adj[u].push_back(v);
+    adj[v].push_back(u);
+}
+
+int main(){
+	
+	// V = 4, E = 4
+	vector<int>adj[4];
+	
+	addEdge(adj, 0, 2);
+   	addEdge(adj, 0, 3);
+	addEdge(adj, 2, 3);
+	addEdge(adj, 3, 1);
+
+	Solution obj;
+	bool ans = obj.isBipartite(4, adj);    
+	if(ans)cout << "1\n";
+	else cout << "0\n";  
+	
+	return 0;
+}
+Output:  0
+
+Time Complexity: O(V + 2E), Where V = Vertices, 2E is for total degrees as we traverse all adjacent nodes.
+
+Space Complexity: O(3V) ~ O(V), Space for DFS stack space, colour array and an adjacency list.
+
+
 
 
