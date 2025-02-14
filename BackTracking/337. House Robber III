@@ -1,0 +1,110 @@
+
+Leetcode : https://leetcode.com/problems/house-robber-iii/description/
+The thief has found himself a new place for his thievery again. There is only one entrance to this area, called root.
+
+Besides the root, each house has one and only one parent house. After a tour, the smart thief realized that all houses in this place form a binary tree. It will automatically contact the police if two directly-linked houses were broken into on the same night.
+
+Given the root of the binary tree, return the maximum amount of money the thief can rob without alerting the police.
+
+ 
+
+Example 1:
+
+
+Input: root = [3,2,3,null,3,null,1]
+Output: 7
+Explanation: Maximum amount of money the thief can rob = 3 + 3 + 1 = 7.
+Example 2:
+
+
+Input: root = [3,4,5,1,3,null,1]
+Output: 9
+Explanation: Maximum amount of money the thief can rob = 4 + 5 = 9.
+ 
+
+Constraints:
+
+The number of nodes in the tree is in the range [1, 104].
+0 <= Node.val <= 104
+
+
+
+
+
+//Approach:
+Since the houses form a binary tree, the thief cannot rob two directly connected houses (parent-child restriction).
+We solve this using post-order DFS + memoization (Dynamic Programming on Trees).
+
+//Key Idea:
+For each node (house), the thief has two choices:
+
+Rob the current house:
+This means skipping its direct children and considering the grandchildren.
+Skip the current house:
+In this case, we are free to rob both children.
+We compute the maximum profit at each node using a recursive DFS.
+
+//Recursive Formula:
+For a given node root:
+
+If we rob root, the maximum amount we can get is:
+root.val+rob(root.left’s children)+rob(root.right’s children)
+
+If we don't rob root, we can freely rob its children:
+rob(root.left)+rob(root.right)
+Thus,
+
+rob(root)=max(rob current node,skip current node)
+
+
+
+Solution 
+
+
+
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    private int[] dfs(TreeNode root){
+        if(root==null)
+        return new int[]{0,0};
+        int[] left=dfs(root.left);
+        int[] right=dfs(root.right);
+        int rob=root.val+left[1]+right[1];
+        int notrobbed=Math.max(left[0], left[1]) + Math.max(right[0], right[1]);
+        return new int[]{rob,notrobbed};
+    }
+    public int rob(TreeNode root) {
+                int[] result = dfs(root);
+        return Math.max(result[0], result[1]);
+        
+    }
+}
+
+
+
+
+Time & Space Complexity Analysis
+Time Complexity: 
+O(N)
+We visit each node once in post-order DFS.
+Each node does constant work → 
+
+O(N) total.
+Space Complexity: 
+O(N) (worst case)
+In skewed trees, DFS recursion goes up to O(N) depth.
+In balanced trees, space is O(log N) due to the recursion stack.
