@@ -1,0 +1,75 @@
+Given two positive integers left and right, find the two integers num1 and num2 such that:
+
+left <= num1 < num2 <= right .
+Both num1 and num2 are prime numbers.
+num2 - num1 is the minimum amongst all other pairs satisfying the above conditions.
+Return the positive integer array ans = [num1, num2]. If there are multiple pairs satisfying these conditions, return the one with the smallest num1 value. If no such numbers exist, return [-1, -1].
+
+ 
+
+Example 1:
+
+Input: left = 10, right = 19
+Output: [11,13]
+Explanation: The prime numbers between 10 and 19 are 11, 13, 17, and 19.
+The closest gap between any pair is 2, which can be achieved by [11,13] or [17,19].
+Since 11 is smaller than 17, we return the first pair.
+Example 2:
+
+Input: left = 4, right = 6
+Output: [-1,-1]
+Explanation: There exists only one prime number in the given range, so the conditions cannot be satisfied.
+---
+
+# **Intuition**  
+To find the closest prime numbers in a given range, we first need to determine all primes in that range efficiently. Using the **Sieve of Eratosthenes**, we can precompute primes. Then, we can find the pair of primes with the minimum difference.  
+
+# **Approach**  
+1. **Find all primes** between `left` and `right` using the **Sieve of Eratosthenes**.  
+2. **Extract primes** from the sieve into a list.  
+3. **Find the closest pair** by iterating through the sorted prime list and tracking the minimum difference.  
+
+# **Complexity**  
+- **Time complexity:** \( O(\text{right} \log \log \text{right}) \) (Sieve of Eratosthenes) + \( O(P) \) (finding min diff)  
+- **Space complexity:** \( O(\text{right}) \) (boolean sieve storage)  
+
+# **Code**  
+```java
+class Solution {
+    private List<Integer> findPrimes(int left, int right) {
+        List<Integer> res = new ArrayList<>();
+        boolean[] sieve = new boolean[right + 1];
+        Arrays.fill(sieve, true);
+        sieve[0] = sieve[1] = false;
+        for (int i = 2; i * i <= right; i++) {
+            if (sieve[i]) {
+                for (int j = i * i; j <= right; j += i) {
+                    sieve[j] = false;
+                }
+            }
+        }
+        for (int k = left; k <= right; k++) {
+            if (sieve[k]) res.add(k);
+        }
+        return res;
+    }
+
+    private int[] findMinDiff(List<Integer> primes) {
+        int[] res = { -1, -1 };
+        int min_diff = Integer.MAX_VALUE;
+        for (int i = 1; i < primes.size(); i++) {
+            if (primes.get(i) - primes.get(i - 1) < min_diff) {
+                min_diff = primes.get(i) - primes.get(i - 1);
+                res[0] = primes.get(i - 1);
+                res[1] = primes.get(i);
+            }
+        }
+        return res;
+    }
+
+    public int[] closestPrimes(int left, int right) {
+        List<Integer> primes = findPrimes(left, right);
+        return findMinDiff(primes);
+    }
+}
+```
