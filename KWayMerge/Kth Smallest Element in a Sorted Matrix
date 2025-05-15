@@ -1,0 +1,86 @@
+Kth Smallest Element in a Sorted Matrix
+
+## 📌 Problem Statement
+
+Find the **k<sup>th</sup> smallest element** in an **(n × n)** matrix, where **each row and column is sorted in ascending**
+
+
+Algorithm
+
+## 💡 Intuition / Approach
+
+- We **push the first element of each row** of the matrix into a **min-heap**, storing each element along with its **row and column index**.
+- **Remove the top (root)** of the min-heap — this is the current smallest element.
+- If the popped element has a **next element in the same row**, **push the next element** into the heap.
+- **Repeat steps 2 and 3** until we have **popped `k` elements** from the min-heap.
+- The **k<sup>th</sup> popped element** is the **k<sup>th</sup> smallest element** in the matrix.
+
+
+
+solution 
+import java.util.*;
+
+public class Solution {
+    public int kSmallestNumber(int[][] matrix, int k) {
+        int rowCount = matrix.length;
+
+        // Min-heap storing {value, rowIndex, colIndex}
+        PriorityQueue<int[]> minHeap = new PriorityQueue<>(Comparator.comparingInt(a -> a[0]));
+
+        // Push the first element of each row into the heap (up to k rows)
+        for (int i = 0; i < Math.min(rowCount, k); i++) {
+            minHeap.offer(new int[]{matrix[i][0], i, 0});
+        }
+
+        int numbersChecked = 0;
+        int smallestElement = 0;
+
+        while (!minHeap.isEmpty()) {
+            int[] curr = minHeap.poll();
+            smallestElement = curr[0];
+            int rowIndex = curr[1];
+            int colIndex = curr[2];
+            numbersChecked++;
+
+            if (numbersChecked == k) {
+                break;
+            }
+
+            // Push the next element in the same row, if it exists
+            if (colIndex + 1 < matrix[rowIndex].length) {
+                minHeap.offer(new int[]{matrix[rowIndex][colIndex + 1], rowIndex, colIndex + 1});
+            }
+        }
+
+        return smallestElement;
+    }
+}
+
+
+Time Complexity 
+
+The time complexity of the first step is:
+
+O(min(n, k)) for iterating over the minimum of n (number of rows in the matrix) and k (position of the smallest element we want to find).
+
+Each push operation into the heap takes O(log m), where m is the number of elements currently in the heap. Since we add at most min(n, k) elements, the time complexity of the first loop becomes:
+
+O(min(n, k) × log(min(n, k)))
+
+In the while-loop, we pop and possibly push up to k elements from/into the heap. Each of these operations also takes O(log(min(n, k))) time, as the heap size stays bounded by min(n, k).
+
+So the time complexity of the second loop is:
+O(k × log(min(n, k)))
+
+total Time Complexity - O((min(n, k) + k) × log(min(n, k)))
+
+
+Space Complexity -  O(min(n, k))
+
+
+
+
+Why use min(rowCount, k)?
+If k < rowCount: You don’t need more than k rows — because the k-th smallest element cannot lie beyond the first k rows (since the matrix is sorted).
+
+If k ≥ rowCount: Then you use all available rows.
