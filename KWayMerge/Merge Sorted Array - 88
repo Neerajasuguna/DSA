@@ -1,0 +1,73 @@
+
+
+You are given two integer arrays nums1 and nums2, sorted in non-decreasing order, and two integers m and n, representing the number of elements in nums1 and nums2 respectively.
+
+Merge nums1 and nums2 into a single array sorted in non-decreasing order.
+
+The final sorted array should not be returned by the function, but instead be stored inside the array nums1. To accommodate this, nums1 has a length of m + n, where the first m elements denote the elements that should be merged, and the last n elements are set to 0 and should be ignored. nums2 has a length of n.
+
+ 
+
+Algorithm 
+
+ **Initialize Pointers**
+   - `i` → Points to the last valid element in `nums1` (`i = m - 1`)
+   - `j` → Points to the last element in `nums2` (`j = n - 1`)
+   - `k` → Points to the last index of the final merged array in `nums1` (`k = m + n - 1`)
+
+2. **Traverse from the End**
+   - Loop while `i >= 0` and `j >= 0`
+   - At each step:
+     - Compare `nums1[i]` and `nums2[j]`
+     - Place the larger of the two at index `k` in `nums1`
+     - Decrement the respective pointer (`i` or `j`) and `k`
+
+3. **Copy Remaining Elements from `nums2`**
+   - After the loop, if any elements are left in `nums2`, copy them into `nums1`
+   - (No need to copy from `nums1` — they’re already in the correct place)
+
+4. **Result**
+   - `nums1` now contains the merged array, sorted in non-decreasing order
+   - Done in-place with **O(m + n)** time and **O(1)** space
+
+
+
+
+
+
+
+
+
+
+solution 
+
+
+
+class Solution {
+    public void merge(int[] nums1, int m, int[] nums2, int n) {
+        int i=m-1,j=n-1,k=(m+n-1);
+        while(i>=0&&j>=0){
+            if(nums1[i]>=nums2[j]){
+                nums1[k]=nums1[i];
+                i--;
+                k--;
+            }
+            else{
+                nums1[k]=nums2[j];
+                j--;
+                k--;
+            }
+        }
+
+        while(j>=0){
+            nums1[k]=nums2[j];
+            k--;j--;
+        }
+    }
+}
+
+
+Time COmplexity -O(m+n)
+Space Complexity - O(1)
+
+
