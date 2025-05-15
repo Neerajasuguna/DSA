@@ -1,0 +1,141 @@
+
+Given `m` sorted lists in ascending order and an integer `k`, find the **k-th smallest element** among all the lists.
+
+- Even if some values appear multiple times across the lists, each occurrence is treated as a unique element when determining the k-th smallest number.
+- If `k` exceeds the total number of elements across all lists, return the **largest element** among them.
+- If the lists are empty, return `0`.
+
+
+
+## Solution Summary
+
+We can summarize our solution in the following steps:
+
+1. **Push the first element of each list into the min-heap.**
+
+2. **Pop the top element from the min-heap**, and keep track of the list index and the element index within that list.  
+   Then, push the next element from the same list into the heap **if the popped element is not the last element in that list**.
+
+3. **Repeat step 2 until we have popped `k` elements from the heap.**  
+   The `k`-th element popped from the heap is the `k`-th smallest element.
+
+---
+
+
+
+
+
+
+
+
+
+solution 
+
+
+int KSmallestNumber(std::vector<std::vector<int>>& lists, int k) {
+    int listLength = lists.size();
+    std::priority_queue<std::vector<int>, std::vector<std::vector<int>>, std::greater<std::vector<int>>> kthSmallest;
+
+    for (int index = 0; index < listLength; index++) {
+        if (lists[index].size() == 0) {
+            continue;
+        } else {
+            kthSmallest.push({lists[index][0], index, 0});
+        }
+    }
+
+    int numbersChecked = 0, smallestNumber = 0;
+    while (!kthSmallest.empty()) { 
+        std::vector<int> smallest = kthSmallest.top();
+        kthSmallest.pop();
+        smallestNumber = smallest[0];
+        int listIndex = smallest[1];
+        int numIndex = smallest[2];
+        numbersChecked++;
+
+        if (numbersChecked == k) {
+            break;
+        }
+
+        if (numIndex + 1 < lists[listIndex].size()) {
+            kthSmallest.push({lists[listIndex][numIndex + 1], listIndex, numIndex + 1});
+        }
+    }
+    return smallestNumber;
+}
+
+// driver code
+int main(){
+std::vector<std::vector<std::vector<int>>> lists ={
+            {{2, 6, 8}, 
+            {3, 6, 10}, 
+            {5, 8, 11}}, 
+               
+            {{1, 2, 3}, 
+            {4, 5}, 
+            {6, 7, 8, 15},
+            {10, 11, 12, 13},
+            {5, 10}},
+
+            {{},{},{}},
+            
+            {{1, 1, 3, 8}, 
+            {5, 5, 7, 9}, 
+            {3, 5, 8, 12}},
+
+            {{5, 8, 9, 17}, 
+            {}, 
+            {8, 17, 23, 24}}
+            };
+
+    std::vector<int> k = {5, 50, 7, 4, 8};
+    for (int i=0; i< k.size(); i++){
+            std::cout<<i+1<< ".\tInput lists: "<< Print2dList(lists[i])<<std::endl;
+            std::cout<<"\tK = "<<k[i]<<std::endl;
+            std::cout<<"\t"<<k[i]<<"th smallest number from the given lists is: "<<KSmallestNumber(lists[i], k[i])<<std::endl;
+        std::cout<< std::string(100, '-') << "\n";
+    }
+}
+
+
+
+
+
+
+
+
+
+## Time Complexity
+
+- The first step iterates over `m` lists and pushes the first element of each list into the min-heap, which takes **O(m)** time.
+
+- The cost of pushing `m` elements into the heap is:
+
+  \[
+  \log 1 + \log 2 + \log 3 + \cdots + \log m = \log(1 \times 2 \times 3 \times \cdots \times m) = \log(m!)
+  \]
+
+- Using Stirling's approximation:
+
+  \[
+  O(\log m!) \approx O(m \log m)
+  \]
+
+- So, the time complexity of the first loop is **O(m log m)**.
+
+- In the while loop, we pop and push elements up to `k` times. Each operation costs **O(log m)** because the heap size is at most `m`.
+
+- Therefore, the time complexity of this step is **O(k log m)**.
+
+- **Total time complexity:**
+
+  \[
+  O(m log m + k log m) = O((m + k) log m)
+  \]
+
+---
+
+## Space Complexity
+
+- The heap stores at most one element from each of the `m` lists at any time.  
+- Hence, the space complexity is **O(m)**.
