@@ -1,0 +1,152 @@
+
+
+You are given a sorted array of unique integers, `arr`, which includes the number **1** and other **prime numbers**. You are also given an integer `k`.
+
+For every index `i` and `j` where `0 ≤ i < j < arr.length`, you can form a **fraction** by taking the number at index `i` as the numerator and the number at index `j` as the denominator — resulting in the fraction `arr[i] / arr[j]`.
+
+## 🧠 Task
+
+Return the **k-th smallest fraction** among all these possible fractions. The answer should be returned as an array of two integers:
+
+
+
+
+Solution 
+
+## 💡 Problem Explanation
+
+We need to find the **k<sup>th</sup> smallest fraction** that can be formed using elements from a **sorted array of unique integers** (which includes `1` and other **prime numbers**).
+
+---
+
+## 🧠 Approach
+
+1. **Heap Initialization**:
+   - We begin by inserting the **smallest possible fraction** for each potential denominator into a **min-heap**.
+   - For any denominator `arr[j]`, the smallest numerator is always `arr[0]` because the array is sorted.
+   - So, we push all fractions of the form `arr[0] / arr[j]` (for `j = 1 to n-1`) into the heap.
+   - This ensures that the smallest fractions are considered first.
+
+2. **Iterative Heap Processing**:
+   - We repeatedly **pop the smallest fraction** from the heap.
+   - Each popped fraction belongs to a sequence where:
+     - The **denominator stays the same**
+     - The **numerator can increase** (move to the next index)
+   - If there is a next valid numerator (i.e., `i + 1 < j`), we push the next fraction `arr[i+1] / arr[j]` into the heap.
+
+3. **Final Extraction**:
+   - We repeat this process **`k - 1` times**, each time removing the current smallest fraction.
+   - The next fraction popped from the heap will be the **k<sup>th</sup> smallest**, which is our result.
+
+---
+
+## 🧮 Time & Space Complexity
+
+- **Time Complexity**: `O(k * log n)` where `n` is the length of the array.
+- **Space Complexity**: `O(n)` for the heap.
+
+---
+
+## 📌 Summary
+
+- Use a min-heap to efficiently track and retrieve the next smallest fraction.
+- Always insert the next possible fraction in a sequence (increasing numerator, same denominator).
+- After `k-1` pops, the next pop gives the k<sup>th</sup> smallest fraction.
+
+
+
+
+
+
+Solution 
+import java.util.*;
+
+public class KthSmallestPrimeFraction {
+
+    public static int[] kthSmallestPrimeFraction(int[] arr, int k) {
+        int n = arr.length;
+
+        // Priority queue that stores [value, numerator index, denominator index]
+        // Ordered by fraction value (smallest first)
+        PriorityQueue<Fraction> minHeap = new PriorityQueue<>(Comparator.comparingDouble(f -> f.value));
+
+        // Insert arr[0] / arr[j] for j = 1 to n - 1
+        for (int j = 1; j < n; j++) {
+            minHeap.offer(new Fraction((double) arr[0] / arr[j], 0, j));
+        }
+
+        // Pop k-1 elements
+        for (int i = 0; i < k - 1; i++) {
+            Fraction f = minHeap.poll();
+            int numIdx = f.numeratorIdx;
+            int denIdx = f.denominatorIdx;
+
+            if (numIdx + 1 < denIdx) {
+                minHeap.offer(new Fraction((double) arr[numIdx + 1] / arr[denIdx], numIdx + 1, denIdx));
+            }
+        }
+
+        Fraction kth = minHeap.peek();
+        return new int[]{arr[kth.numeratorIdx], arr[kth.denominatorIdx]};
+    }
+
+    static class Fraction {
+        double value;
+        int numeratorIdx;
+        int denominatorIdx;
+
+        Fraction(double value, int numeratorIdx, int denominatorIdx) {
+            this.value = value;
+            this.numeratorIdx = numeratorIdx;
+            this.denominatorIdx = denominatorIdx;
+        }
+    }
+
+    // Driver code for testing
+    public static void main(String[] args) {
+        List<TestCase> testCases = List.of(
+            new TestCase(new int[]{1, 3, 5, 7, 9, 11}, 2),
+            new TestCase(new int[]{1, 7, 23, 29, 47}, 3),
+            new TestCase(new int[]{1, 2, 3, 5}, 3),
+            new TestCase(new int[]{1, 2, 3, 5}, 1),
+            new TestCase(new int[]{1, 13, 17, 19, 23, 29, 31}, 4)
+        );
+
+        int idx = 1;
+        for (TestCase test : testCases) {
+            System.out.printf("%d.\tArray: %s, k: %d%n", idx++, Arrays.toString(test.arr), test.k);
+            int[] result = kthSmallestPrimeFraction(test.arr, test.k);
+            System.out.printf("\tKth smallest prime fraction is: [%d, %d]%n", result[0], result[1]);
+            System.out.println("-".repeat(100));
+        }
+    }
+
+    static class TestCase {
+        int[] arr;
+        int k;
+
+        TestCase(int[] arr, int k) {
+            this.arr = arr;
+            this.k = k;
+        }
+    }
+}
+
+
+
+
+## ⏱️ Time and Space Complexity
+
+### 🕒 Time Complexity: `O(k * log n)`
+- Initially, we push `n - 1` fractions of the form `arr[0]/arr[j]` into the min-heap → `O(n)`.
+- Each heap operation (insert or remove) takes `O(log n)` time.
+- We perform up to `k` heap operations to extract the k-th smallest fraction.
+- Hence, total time = `O(k * log n)`.
+
+### 🧠 Space Complexity: `O(n)`
+- The heap holds at most `n` elements at any time.
+- So, auxiliary space usage is `O(n)`.
+
+> Here, `n` is the length of the input array `arr`.
+
+
