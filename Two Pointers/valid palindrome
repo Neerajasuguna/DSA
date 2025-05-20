@@ -1,0 +1,64 @@
+Given a string, s, return TRUE if it is a palindrome; otherwise, return FALSE.
+
+A phrase is considered a palindrome if it reads the same backward as forward after converting all uppercase letters to lowercase and removing any characters that are not letters or numbers. 
+  Only alphanumeric characters (letters and digits) are taken into account.
+
+
+
+
+  Algorithm 
+
+
+Solution summary
+Initialize two pointers: one at the beginning (left) and one at the end (right) of the string.
+
+Move both pointers toward the center, skipping any characters that are not alphanumeric.
+
+At each step, compare the characters at the left and right positions after converting them to lowercase.
+
+If a mismatch is found, return False, indicating that the string is not a palindrome.
+
+If the entire string is traversed without mismatches, return True, indicating that the string is a valid palindrome.
+
+
+
+
+
+
+  solution 
+
+public class Solution {
+    public static boolean isPalindrome(String s) {
+        int left = 0, right = s.length() - 1;
+
+        while (left < right) {
+            while (left < right && !Character.isLetterOrDigit(s.charAt(left))) {
+                left++;
+            }
+            
+            while (left < right && !Character.isLetterOrDigit(s.charAt(right))) {
+                right--;
+            }
+
+            if (Character.toLowerCase(s.charAt(left)) != Character.toLowerCase(s.charAt(right))) {
+                return false;
+            }
+
+            left++;
+            right--;
+        }
+
+        return true;
+    }
+
+
+
+
+  Time Complexity - O(n)
+
+  Space Complexity - O(1)
+
+
+
+
+
