@@ -1,0 +1,74 @@
+Given an integer array `nums`, return **all unique triplets** `[nums[i], nums[j], nums[k]]` such that:
+
+- `i ≠ j`, `i ≠ k`, and `j ≠ k`
+- `nums[i] + nums[j] + nums[k] == 0`
+
+The solution must not contain duplicate triplets.
+
+
+
+3. Skip duplicate values to avoid duplicate triplets.
+
+---
+
+### 🧠 Algorithm Steps:
+
+- Sort the array.
+- Loop `i` from `0` to `n - 3`:
+- If `nums[i]` is the same as `nums[i - 1]`, skip to avoid duplicates.
+- Set `left = i + 1`, `right = n - 1`
+- While `left < right`:
+ - Calculate `sum = nums[i] + nums[left] + nums[right]`
+ - If sum is zero, store the triplet, then move both pointers and skip duplicates.
+ - If sum < 0, move `left++`
+ - If sum > 0, move `right--`
+
+---
+
+### 💻 Java Code:
+
+```java
+import java.util.*;
+
+public class ThreeSum {
+ public List<List<Integer>> threeSum(int[] nums) {
+     List<List<Integer>> result = new ArrayList<>();
+     Arrays.sort(nums);  // Step 1: Sort the array
+
+     for (int i = 0; i < nums.length - 2; i++) {
+         if (i > 0 && nums[i] == nums[i - 1]) continue;  // Skip duplicates
+
+         int left = i + 1;
+         int right = nums.length - 1;
+
+         while (left < right) {
+             int sum = nums[i] + nums[left] + nums[right];
+
+             if (sum == 0) {
+                 result.add(Arrays.asList(nums[i], nums[left], nums[right]));
+
+                 // Skip duplicates
+                 while (left < right && nums[left] == nums[left + 1]) left++;
+                 while (left < right && nums[right] == nums[right - 1]) right--;
+
+                 left++;
+                 right--;
+             } else if (sum < 0) {
+                 left++;  // Need a larger number
+             } else {
+                 right--;  // Need a smaller number
+             }
+         }
+     }
+     return result;
+ }
+}
+
+
+
+Time Complexity:
+O(n²) — Sorting takes O(n log n), and the two-pointer scan is O(n²) in the worst case.
+
+💾 Space Complexity:
+O(1) — If the result list is not counted, otherwise O(k) where k is the number of triplets.
+
