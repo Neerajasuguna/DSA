@@ -1,0 +1,124 @@
+Given an integer n and an array of distinct prime numbers primes, return the n-th super ugly number. A super ugly number is a positive integer whose only prime factors are from a given array primes.
+
+The n-th super ugly number is guaranteed to fit within a 32-bit signed integer.
+
+
+
+
+Algorithm 
+
+
+## 🧠 Algorithm Explanation: Finding the n-th Super Ugly Number
+
+A **super ugly number** is a positive integer whose **only prime factors** are from a given list of primes.
+
+We aim to find the **n-th super ugly number** in ascending order using a **min-heap** for efficiency.
+
+---
+
+### ✅ Steps of the Algorithm:
+
+1. **Initialize the Result List:**
+   - Create a list `ugly` and initialize it with `1` (the first super ugly number).
+
+2. **Initialize a Min-Heap:**
+   - Use a **min-heap** (priority queue) to store the next candidates.
+   - For each prime `p` in the input list, insert a tuple into the heap:
+     ```
+     (p, p, 0)
+     ```
+     - `p` is the first multiple of the prime.
+     - The second `p` is the prime itself.
+     - `0` is the index in the `ugly` list where the prime was last multiplied.
+
+3. **Build the Super Ugly List:**
+   - Repeat until we have `n` super ugly numbers in the list:
+     - Extract the smallest element from the heap: `(nextUgly, prime, index)`.
+     - If `nextUgly` is **not a duplicate** of the last value in `ugly`, add it to the list.
+     - Compute the next candidate multiple using:
+       ```
+       newVal = prime * ugly[index + 1]
+       ```
+     - Push `(newVal, prime, index + 1)` back into the heap.
+
+4. **Return the Result:**
+   - Once the loop ends, the `n`-th super ugly number is the last element in the `ugly` list.
+
+---
+
+### 🕒 Time Complexity:
+- **O(n log k)** where:
+  - `n` is the number of super ugly numbers to find,
+  - `k` is the number of primes.
+- At each iteration, we push/pop from a heap of size `k`.
+
+### 💾 Space Complexity:
+- **O(n + k)**:
+  - `n` space for the `ugly` list,
+  - `k` space for the heap storing candidates.
+
+
+
+
+
+
+
+
+solution 
+
+import java.util.*;
+
+public class SuperUglyNumber {
+    
+    public static int nthSuperUglyNumber(int n, int[] primes) {
+        List<Integer> ugly = new ArrayList<>();
+        ugly.add(1);
+        
+        // Min-heap storing: [nextUgly, prime, index]
+        PriorityQueue<long[]> minHeap = new PriorityQueue<>(Comparator.comparingLong(a -> a[0]));
+        
+        for (int prime : primes) {
+            minHeap.offer(new long[]{prime, prime, 0});
+        }
+        
+        while (ugly.size() < n) {
+            long[] entry = minHeap.poll();
+            long nextUgly = entry[0];
+            long prime = entry[1];
+            int index = (int) entry[2];
+            
+            if (nextUgly != ugly.get(ugly.size() - 1)) {
+                ugly.add((int) nextUgly);
+            }
+            
+            long newVal = prime * ugly.get(index + 1);
+            minHeap.offer(new long[]{newVal, prime, index + 1});
+        }
+        
+        return ugly.get(n - 1);
+    }
+
+    public static void main(String[] args) {
+        int[] nValues = {12, 1, 15, 10, 8};
+        int[][] primesList = {
+            {2, 7, 13, 19},
+            {2, 3, 5},
+            {3, 5, 7},
+            {2, 5, 11},
+            {3, 11, 17}
+        };
+
+        for (int i = 0; i < nValues.length; i++) {
+            int n = nValues[i];
+            int[] primes = primesList[i];
+            
+            System.out.println((i + 1) + ".\tn: " + n);
+            System.out.print("\tprimes: " + Arrays.toString(primes));
+            System.out.println();
+
+            int result = nthSuperUglyNumber(n, primes);
+            System.out.println("\n\t" + n + "th super ugly number is " + result);
+            System.out.println("-".repeat(100));
+        }
+    }
+}
