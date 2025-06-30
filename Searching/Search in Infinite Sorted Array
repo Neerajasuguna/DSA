@@ -1,0 +1,74 @@
+"Given an array containing infinite sorted integers and an element,  write a program to find the position of the element."
+
+Examples:
+
+Example 1:
+Input: N = 89, array[] = {9, 11, 17, 26, 37, 52, 89, 111, 129, 144, 198}
+Output: 6
+Explanation: The element 89 is present at the 6th index of the array.
+
+Example 2:
+Input: N =20 array[] = {2, 4, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26}
+Output: 8
+Explanation: The element 20 is present at the 8th index of the array.
+
+
+
+Solution : 
+
+
+
+We know that Binary Search uses two-pointers low and high. Low points to the 0th index and high points to (n-1)th index in the case of an array containing N elements.
+
+But in this case, we are given an infinite sized sorted array, so we don’t know the last index of the element in the array where we will point to high
+
+Since it has infinite elements. So we will think of a better version of Binary Search by increasing the search space exponentially. 
+
+Keep low pointer at 0th index initially 
+High at 1th index.
+Using a while loop check if the arr[high] < key, if it is then increase the search space by multiplying high by 2, and low = high.
+Now when arr[high] > key, that means the element is present between low and high, and apply Binary search.
+Return the index of the element if found.
+In this case, the while loop runs exponentially and has a time complexity of logn. And Binary Search also has the time complexity of logn.
+
+
+
+public static int binarySearch(int[] arr, int low, int high, int key) {
+    while (low <= high) {
+
+      int mid = (low + high) / 2;
+      if (arr[mid] < key) {
+        low = mid + 1;
+      } else if (arr[mid] > key) {
+        high = mid - 1;
+      } else {
+        return mid;
+      }
+
+    }
+    return -1;
+  }
+  public static int findIndex(int[] arr, int key) {
+    int low = 0;
+    int high = 1;
+    while (arr[high] < key) {
+      low = high;
+      high = 2 * high;
+    }
+    return binarySearch(arr, low, high, key);
+  }
+  public static void main(String args[]) {
+    // Your code goes here
+    int[] arr = {3,5,7,9,10,90,100,130,140,160,170};
+
+    int ans = findIndex(arr, 130);
+
+    System.out.println("Element found at index " + ans);
+  }
+
+
+
+
+Time Complexity: O(logN) + O(logN) = O(logN)
+
+Space Complexity: O(1)
