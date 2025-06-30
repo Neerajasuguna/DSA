@@ -1,0 +1,44 @@
+Given the root of a binary tree, return all paths from the root to the leaf nodes in any order. Each path should be represented as a string of node values,
+separated by arrows (→), where a leaf is defined as a node with no children.
+
+
+
+
+
+public class Solution {
+    public List<String> binaryTreePaths(TreeNode<Integer> root) {
+        List<String> paths = new ArrayList<>();
+        backtrack(root, "", paths);
+        return paths;
+    }
+
+    private void backtrack(TreeNode<Integer> root, String path, List<String> paths) {
+        if (root != null) {
+            path += root.data;
+            if (root.left == null && root.right == null) {
+                paths.add(path);
+            } else {
+                path += "->";
+                backtrack(root.left, path, paths);
+                backtrack(root.right, path, paths);
+            }
+        }
+    }
+
+
+
+Time Complexity 
+The time complexity of this solution is O(n log n), where n is the number of nodes in the tree. This is because:
+
+Each node is visited exactly once, which takes O(n) time.
+
+Additionally, the current path is copied at each node, and the path length is proportional to the tree’s height, which is O(log n) in a balanced tree.
+
+Since this copying is done for all n nodes, the total complexity becomes O(n log n).
+
+
+
+
+Space Complexity 
+
+O(n)
