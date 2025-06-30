@@ -169,3 +169,46 @@ public class RatInMaze {
 
 
 Storing all paths: O(k * N^2) — since there can be k paths, each of length up to N^2
+
+
+
+
+
+
+🧠 Should visited[x][y] = true be unmarked in DFS?
+
+It depends on the goal of your DFS function.
+
+--------------------------------------------------
+✅ Case 1: Return boolean (only check if path exists)
+--------------------------------------------------
+Code structure:
+if (isSafe(...) && dfs(...)) return true;
+
+- You return true as soon as any path to the destination is found
+- You are NOT exploring all possible paths
+- So, you DO NOT need to unmark visited[x][y]
+- Once visited, the cell stays marked until the search ends
+
+=> ✅ No need to set visited[x][y] = false
+
+--------------------------------------------------
+🔁 Case 2: Return all paths (backtracking)
+--------------------------------------------------
+Code structure:
+paths.add(path);
+visited[x][y] = false; // backtracking
+
+- You must explore all possible valid paths
+- After exploring from a cell, you must unmark it to allow revisiting it in other paths
+
+=> ✅ You MUST set visited[x][y] = false during backtracking
+
+--------------------------------------------------
+✅ Summary:
+
+| Goal                        | Unmark visited?     |
+|-----------------------------|---------------------|
+| Return boolean (one path)   | ❌ No               |
+| Return all paths (backtrack)| ✅ Yes              |
+
