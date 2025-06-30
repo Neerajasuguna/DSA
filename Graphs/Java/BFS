@@ -1,0 +1,36 @@
+BFS of a graph 
+
+Input: V = 5, adj = [[2, 3, 1], [0], [0, 4], [0], [2]]
+
+
+
+
+public List<Integer> bfsOfGraph(int V, List<List<Integer>> adj) {
+    List<Integer> bfs = new ArrayList<>();
+    boolean[] visited = new boolean[V];
+    Queue<Integer> q = new LinkedList<>();
+
+    q.offer(0);
+    visited[0] = true;
+
+    while (!q.isEmpty()) {
+        int node = q.poll();
+        bfs.add(node);
+
+        for (int neighbor : adj.get(node)) {
+            if (!visited[neighbor]) {
+                q.offer(neighbor);
+                visited[neighbor] = true;
+            }
+        }
+    }
+
+    return bfs;
+}
+
+
+
+
+Each node is visited exactly once → O(V)
+
+For each node, we iterate over all its adjacent nodes once in total → all E edges
