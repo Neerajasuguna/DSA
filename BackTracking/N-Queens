@@ -1,0 +1,193 @@
+
+Place N queens on an N×N chessboard such that:
+No two queens attack each other
+A queen can attack vertically, horizontally, and diagonally
+
+
+Solution : 
+We place queens row by row:
+Start from the first row
+For each column in that row, check if it's safe
+If safe, place the queen and move to the next row
+If not safe or if dead end, backtrack and try next column
+
+
+Print all Solutions 
+
+
+import java.util.*;
+
+public class NQueens {
+    public static void solveNQueens(int n) {
+        char[][] board = new char[n][n];
+        for (char[] row : board)
+            Arrays.fill(row, '.');
+        
+        List<List<String>> result = new ArrayList<>();
+        solve(0, board, result, n);
+        
+        for (List<String> solution : result) {
+            for (String row : solution)
+                System.out.println(row);
+            System.out.println();
+        }
+    }
+
+    private static void solve(int row, char[][] board, List<List<String>> result, int n) {
+        if (row == n) {
+            result.add(construct(board));
+            return;
+        }
+
+        for (int col = 0; col < n; col++) {
+            if (isSafe(board, row, col, n)) {
+                board[row][col] = 'Q';
+                solve(row + 1, board, result, n);
+                board[row][col] = '.'; // backtrack
+            }
+        }
+    }
+
+    private static boolean isSafe(char[][] board, int row, int col, int n) {
+        // Check column
+        for (int i = 0; i < row; i++)
+            if (board[i][col] == 'Q') return false;
+
+        // Check upper-left diagonal
+        for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--)
+            if (board[i][j] == 'Q') return false;
+
+        // Check upper-right diagonal
+        for (int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++)
+            if (board[i][j] == 'Q') return false;
+
+        return true;
+    }
+
+    private static List<String> construct(char[][] board) {
+        List<String> list = new ArrayList<>();
+        for (char[] row : board)
+            list.add(new String(row));
+        return list;
+    }
+
+    public static void main(String[] args) {
+        int n = 4;  // You can change this to any N
+        solveNQueens(n);
+    }
+}
+
+
+If you only want to check whether at least one valid N-Queens solution exists (i.e., return true if there's any valid placement, otherwise false),
+
+
+import java.util.*;
+
+public class Solution {
+    public boolean solveNQueens(int n) {
+        char[][] board = new char[n][n];
+        for (char[] row : board)
+            Arrays.fill(row, '.');
+
+        return solve(0, board, n);
+    }
+
+    private boolean solve(int row, char[][] board, int n) {
+        if (row == n) {
+            return true; // Found a valid solution
+        }
+
+        for (int col = 0; col < n; col++) {
+            if (isSafe(board, row, col, n)) {
+                board[row][col] = 'Q';
+                if (solve(row + 1, board, n)) return true; // Early return
+                board[row][col] = '.'; // backtrack
+            }
+        }
+
+        return false; // No valid placement for this row
+    }
+
+    private boolean isSafe(char[][] board, int row, int col, int n) {
+        // Check column
+        for (int i = 0; i < row; i++)
+            if (board[i][col] == 'Q') return false;
+
+        // Check upper-left diagonal
+        for (int i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--)
+            if (board[i][j] == 'Q') return false;
+
+        // Check upper-right diagonal
+        for (int i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++)
+            if (board[i][j] == 'Q') return false;
+
+        return true;
+    }
+}
+
+
+
+✅ Time Complexity of N-Queens Solutions
+
+---------------------------------------------
+1️⃣ Return All Solutions
+---------------------------------------------
+- Backtracking tries placing queens in every column for each row
+- It explores all valid configurations
+
+🔁 Time Complexity: O(N!)
+- Row 0 → N options
+- Row 1 → (N - 1) options
+- Row 2 → (N - 2) options
+- ...
+- Total: N * (N - 1) * (N - 2) * ... * 1 = O(N!)
+
+📝 Note: Copying each valid board takes O(N^2), but it's often ignored unless measuring total output cost.
+
+---------------------------------------------
+2️⃣ Return True/False (Does any solution exist?)
+---------------------------------------------
+- Same backtracking logic
+- But stops early when first valid solution is found
+
+🔁 Time Complexity: O(N!) in worst case
+✅ Best case: Much faster (early exit)
+❗ Worst case: Still O(N!) if no solution or last branch has it
+
+---------------------------------------------
+📊 Summary Table:
+
+| Solution Type           | Time Complexity | Notes                                   |
+|-------------------------|-----------------|-----------------------------------------|
+| Return all solutions    | O(N!)           | Full exploration of valid placements    |
+| Return true/false       | O(N!) worst     | Early exit after first valid path found |
+
+
+
+
+
+
+
+
+
+
+
+
+✅ Why check only upper column and diagonals in N-Queens?
+
+We place queens row-by-row from top to bottom.
+
+At any point (row r):
+- Rows below r are still empty (no queens placed yet)
+- Only rows above can have queens
+
+So, we check:
+1. Same column above (vertical threat)
+2. Upper-left diagonal
+3. Upper-right diagonal
+
+We don't check:
+- Same row (we only place one queen per row)
+- Rows below (not filled yet)
+
+=> This ensures all threats from already-placed queens are checked, no redundancy.
