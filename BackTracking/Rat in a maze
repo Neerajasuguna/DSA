@@ -1,0 +1,171 @@
+
+
+
+If you only want to check whether a path exists in the maze (from (0, 0) to (n-1, n-1)) and return a boolean
+
+
+public class RatInMazeBoolean {
+
+    public static boolean isPathExists(int[][] maze, int n) {
+        boolean[][] visited = new boolean[n][n];
+
+        if (maze[0][0] == 0 || maze[n-1][n-1] == 0)
+            return false;
+
+        return dfs(0, 0, maze, visited, n);
+    }
+
+    private static boolean dfs(int x, int y, int[][] maze, boolean[][] visited, int n) {
+        // Base case: reached destination
+        if (x == n - 1 && y == n - 1) {
+            return true;
+        }
+
+        visited[x][y] = true;
+
+        // Move Down
+        if (isSafe(x + 1, y, maze, visited, n) && dfs(x + 1, y, maze, visited, n))
+            return true;
+
+        // Move Right
+        if (isSafe(x, y + 1, maze, visited, n) && dfs(x, y + 1, maze, visited, n))
+            return true;
+
+        // Move Up
+        if (isSafe(x - 1, y, maze, visited, n) && dfs(x - 1, y, maze, visited, n))
+            return true;
+
+        // Move Left
+        if (isSafe(x, y - 1, maze, visited, n) && dfs(x, y - 1, maze, visited, n))
+            return true;
+
+        return false; // No valid move found from current cell
+    }
+
+    private static boolean isSafe(int x, int y, int[][] maze, boolean[][] visited, int n) {
+        return x >= 0 && y >= 0 && x < n && y < n &&
+               maze[x][y] == 1 && !visited[x][y];
+    }
+
+    public static void main(String[] args) {
+        int[][] maze = {
+            {1, 0, 0, 0},
+            {1, 1, 0, 1},
+            {0, 1, 0, 0},
+            {1, 1, 1, 1}
+        };
+        int n = maze.length;
+        boolean pathExists = isPathExists(maze, n);
+        System.out.println("Is path exists? " + pathExists);
+    }
+}
+
+
+
+✅ Time and Space Complexity — Rat in a Maze (returns boolean)
+
+Assumptions:
+- Maze is N x N
+- Rat can move in 4 directions: Down, Right, Up, Left
+- A visited[][] matrix is used to avoid revisiting cells
+- DFS stops as soon as one path is found
+
+-----------------------------
+⏱️ Time Complexity: O(N^2)
+-----------------------------
+- Each cell is visited at most once due to the visited[][] check
+- For N x N grid, there are N^2 cells
+- From each cell, we try 4 directions (constant factor)
+- So, the worst-case number of recursive calls is proportional to N^2
+
+=> Time Complexity = O(N^2)
+
+-------------------------------
+🧠 Space Complexity: O(N^2)
+-------------------------------
+1. visited[N][N] → O(N^2)
+2. Recursion stack (worst case all cells on stack) → O(N^2)
+
+=> Total Space = O(N^2) + O(N^2) = O(N^2)
+
+
+
+
+
+If i have to return paths
+
+
+import java.util.*;
+
+public class RatInMaze {
+    public static List<String> findPaths(int[][] maze, int n) {
+        List<String> paths = new ArrayList<>();
+        boolean[][] visited = new boolean[n][n];
+
+        if (maze[0][0] == 0 || maze[n-1][n-1] == 0)
+            return paths;
+
+        solve(0, 0, maze, n, visited, "", paths);
+        return paths;
+    }
+
+    private static void solve(int x, int y, int[][] maze, int n,
+                              boolean[][] visited, String path, List<String> paths) {
+
+        // Base condition: destination reached
+        if (x == n - 1 && y == n - 1) {
+            paths.add(path);
+            return;
+        }
+
+        visited[x][y] = true;
+
+        // Move Down
+        if (isSafe(x + 1, y, maze, visited, n))
+            solve(x + 1, y, maze, n, visited, path + "D", paths);
+
+        // Move Left
+        if (isSafe(x, y - 1, maze, visited, n))
+            solve(x, y - 1, maze, n, visited, path + "L", paths);
+
+        // Move Right
+        if (isSafe(x, y + 1, maze, visited, n))
+            solve(x, y + 1, maze, n, visited, path + "R", paths);
+
+        // Move Up
+        if (isSafe(x - 1, y, maze, visited, n))
+            solve(x - 1, y, maze, n, visited, path + "U", paths);
+
+        // Backtrack
+        visited[x][y] = false;
+    }
+
+    private static boolean isSafe(int x, int y, int[][] maze, boolean[][] visited, int n) {
+        return x >= 0 && y >= 0 && x < n && y < n &&
+               maze[x][y] == 1 && !visited[x][y];
+    }
+
+    public static void main(String[] args) {
+        int[][] maze = {
+            {1, 0, 0, 0},
+            {1, 1, 0, 1},
+            {0, 1, 0, 0},
+            {1, 1, 1, 1}
+        };
+        int n = maze.length;
+        List<String> result = findPaths(maze, n);
+
+        if (result.isEmpty()) {
+            System.out.println("No path found.");
+        } else {
+            System.out.println("Paths found:");
+            for (String path : result) {
+                System.out.println(path);
+            }
+        }
+    }
+}
+
+
+
+Storing all paths: O(k * N^2) — since there can be k paths, each of length up to N^2
