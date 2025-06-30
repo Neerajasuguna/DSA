@@ -1,0 +1,98 @@
+
+A valid IP address consists of four numeric segments separated by single dots. Each segment must be an integer between 0 and 255 (inclusive), and leading zeros are not allowed unless the segment is exactly ‘0.”
+
+For instance, “10.0.1.25” and “172.16.0.5” are valid IP addresses, while “01.200.100.3,” “256.100.50.25,” and “172.16.0.500” are invalid.
+
+Given a string s made up of digits only, return all possible valid IP addresses that can be created by inserting exactly three dots into the string. You cannot rearrange or delete any digits. The resulting list of valid IP addresses can be returned in any order.
+
+Constraints:
+
+The input string s consists of digits only.
+
+4≤
+ s.length 
+≤
+12
+≤12
+
+
+
+Solution  Explanation
+The backtrack function explores all ways to split the string into 4 valid segments.
+The isValid function ensures:
+No leading zeros unless the segment is "0".
+Segment is within [0, 255].
+Efficient pruning avoids unnecessary recursive calls.
+
+
+
+
+SOlution 
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class RestoreIPAddresses {
+    
+    public List<String> restoreIpAddresses(String s) {
+        List<String> result = new ArrayList<>();
+        backtrack(s, 0, new ArrayList<>(), result);
+        return result;
+    }
+
+    private void backtrack(String s, int start, List<String> path, List<String> result) {
+        if (path.size() == 4) {
+            if (start == s.length()) {
+                result.add(String.join(".", path));
+            }
+            return;
+        }
+
+        for (int len = 1; len <= 3; len++) {
+            if (start + len > s.length()) break;
+
+            String segment = s.substring(start, start + len);
+            if (isValid(segment)) {
+                path.add(segment);
+                backtrack(s, start + len, path, result);
+                path.remove(path.size() - 1); // backtrack
+            }
+        }
+    }
+
+    private boolean isValid(String segment) {
+        if (segment.length() > 1 && segment.startsWith("0")) return false;
+        int value = Integer.parseInt(segment);
+        return value >= 0 && value <= 255;
+    }
+
+    // Example usage
+    public static void main(String[] args) {
+        RestoreIPAddresses solver = new RestoreIPAddresses();
+        String s = "25525511135";
+        List<String> validIPs = solver.restoreIpAddresses(s);
+        for (String ip : validIPs) {
+            System.out.println(ip);
+        }
+    }
+}
+
+
+
+
+
+
+
+ Final Time Complexity:
+Time Complexity: O(1) (bounded by input size)
+→ Practically, O(1) since n is ≤ 12.
+→ The worst-case number of valid segment combinations is limited and doesn't grow beyond that.
+
+Space Complexity:
+
+O(1) for recursion stack (max 4 levels deep)
+
+O(k) for output list, where k is the number of valid IPs formed
+
+
+
