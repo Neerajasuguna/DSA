@@ -1,0 +1,42 @@
+import java.util.*;
+
+
+ Weighted Graph (Directed or Undirected)
+
+class Edge {
+    int to;
+    int weight;
+
+    public Edge(int to, int weight) {
+        this.to = to;
+        this.weight = weight;
+    }
+}
+
+public class WeightedGraph {
+    private Map<Integer, List<Edge>> adjList = new HashMap<>();
+
+    public void addEdge(int u, int v, int w) {
+        adjList.computeIfAbsent(u, k -> new ArrayList<>()).add(new Edge(v, w));
+        // For undirected graph:
+        // adjList.computeIfAbsent(v, k -> new ArrayList<>()).add(new Edge(u, w));
+    }
+
+    public void printGraph() {
+        for (int node : adjList.keySet()) {
+            System.out.print(node + " -> ");
+            for (Edge e : adjList.get(node)) {
+                System.out.print("(" + e.to + ", " + e.weight + ") ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static void main(String[] args) {
+        WeightedGraph g = new WeightedGraph();
+        g.addEdge(1, 2, 10);
+        g.addEdge(1, 3, 15);
+        g.addEdge(2, 4, 20);
+        g.printGraph();
+    }
+}
