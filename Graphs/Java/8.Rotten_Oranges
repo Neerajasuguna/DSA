@@ -1,0 +1,88 @@
+Given an n x m grid, where each cell has the following values : 
+
+2 - represents a rotten orange
+
+1 - represents a Fresh orange
+
+0 - represents an Empty Cell
+
+Every minute, if a fresh orange is adjacent to a rotten orange in 4-direction ( upward, downwards, right, and left ) it becomes rotten. 
+
+Return the minimum number of minutes required such that none of the cells has a Fresh Orange. If it's not possible, return -1.
+
+
+
+import java.util.*;
+
+class Solution {
+    public int orangesRotting(int[][] grid) {
+        int rows = grid.length;
+        int cols = grid[0].length;
+
+        Queue<int[]> queue = new LinkedList<>();
+        int freshCount = 0;
+
+        // Step 1: Count fresh oranges and add rotten ones to the queue
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                if (grid[r][c] == 2) {
+                    queue.offer(new int[]{r, c});
+                } else if (grid[r][c] == 1) {
+                    freshCount++;
+                }
+            }
+        }
+
+        if (freshCount == 0) return 0; // No fresh oranges
+
+        int minutes = 0;
+        int[][] directions = {{-1,0}, {1,0}, {0,-1}, {0,1}}; // up, down, left, right
+
+        // Step 2: BFS from all initially rotten oranges
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            boolean rottedThisMinute = false;
+
+            for (int i = 0; i < size; i++) {
+                int[] cell = queue.poll();
+                int r = cell[0];
+                int c = cell[1];
+
+                for (int[] dir : directions) {
+                    int nr = r + dir[0];
+                    int nc = c + dir[1];
+
+                    if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && grid[nr][nc] == 1) {
+                        grid[nr][nc] = 2;
+                        freshCount--;
+                        queue.offer(new int[]{nr, nc});
+                        rottedThisMinute = true;
+                    }
+                }
+            }
+
+            if (rottedThisMinute) minutes++;
+        }
+
+        return freshCount == 0 ? minutes : -1;
+    }
+}
+
+
+✅ Explanation (Approach)
+Initial Scan: Count all fresh oranges and collect the positions of rotten oranges in a queue.
+BFS Level Order:
+For every minute (level of BFS), go through all rotten oranges.
+For each rotten orange, rot the adjacent fresh oranges (up, down, left, right).
+Add the newly rotten oranges to the queue.
+Count Minutes: Each level of BFS represents one minute.
+Final Check:
+If all fresh oranges are rotten → return minutes.
+If some fresh oranges remain → return -1.
+
+
+
+| Metric           | Value            |
+| ---------------- | ---------------- |
+| Time Complexity  | O(m × n)         |
+| Space Complexity | O(m × n) (queue) |
