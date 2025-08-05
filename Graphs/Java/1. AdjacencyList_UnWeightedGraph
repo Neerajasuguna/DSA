@@ -1,0 +1,29 @@
+
+
+Graph Representation
+
+
+import java.util.*;
+
+public class Graph {
+    private Map<Integer, List<Integer>> adjList = new HashMap<>();
+
+    public void addEdge(int u, int v) {
+        adjList.computeIfAbsent(u, k -> new ArrayList<>()).add(v);
+        adjList.computeIfAbsent(v, k -> new ArrayList<>()).add(u); // Remove for directed
+    }
+
+    public void printGraph() {
+        for (int node : adjList.keySet()) {
+            System.out.println(node + " -> " + adjList.get(node));
+        }
+    }
+
+    public static void main(String[] args) {
+        Graph g = new Graph();
+        g.addEdge(1, 2);
+        g.addEdge(1, 3);
+        g.addEdge(2, 4);
+        g.printGraph();
+    }
+}
