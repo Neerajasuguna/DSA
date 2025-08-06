@@ -1,0 +1,76 @@
+There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. You are given an array prerequisites where prerequisites[i] = [ai, bi] indicates that you must take course bi first if you want to take course ai.
+
+For example, the pair [0, 1], indicates that to take course 0 you have to first take course 1.
+Return true if you can finish all courses. Otherwise, return false.
+
+ 
+
+Example 1:
+
+Input: numCourses = 2, prerequisites = [[1,0]]
+Output: true
+Explanation: There are a total of 2 courses to take. 
+To take course 1 you should have finished course 0. So it is possible.
+Example 2:
+
+Input: numCourses = 2, prerequisites = [[1,0],[0,1]]
+Output: false
+Explanation: There are a total of 2 courses to take. 
+To take course 1 you should have finished course 0, and to take course 0 you should also have finished course 1. So it is impossible.
+ 
+
+
+
+Approach - Topological sort bfs khan based approach 
+
+import java.util.*;
+
+class Solution {
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+        List<List<Integer>> adj = new ArrayList<>();
+        int[] indegree = new int[numCourses];
+
+        // Initialize adjacency list
+        for (int i = 0; i < numCourses; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+        // Build graph and fill indegree array
+        for (int[] pre : prerequisites) {
+            int course = pre[0];
+            int prereq = pre[1];
+            adj.get(prereq).add(course);
+            indegree[course]++;
+        }
+
+        // Add all courses with indegree 0 to queue
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < numCourses; i++) {
+            if (indegree[i] == 0) {
+                queue.add(i);
+            }
+        }
+
+        int count = 0;  // Count of courses that can be completed
+
+        while (!queue.isEmpty()) {
+            int node = queue.poll();
+            count++;
+
+            for (int neighbor : adj.get(node)) {
+                indegree[neighbor]--;
+                if (indegree[neighbor] == 0) {
+                    queue.add(neighbor);
+                }
+            }
+        }
+
+        // If all courses were processed, it's possible to finish
+        return count == numCourses;
+    }
+}
+
+Time and Space Complexity:
+Time: O(V + E), where V = numCourses, E = number of prerequisites
+
+Space: O(V + E)
