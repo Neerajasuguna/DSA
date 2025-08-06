@@ -1,0 +1,101 @@
+
+You are given a matrix mat of size N x M where each cell contains either 'O' or 'X'.
+
+Your task is to replace all 'O' cells that are completely surrounded by 'X' with 'X'.
+
+
+
+Rules:
+
+An 'O' (or a group of connected 'O's) is considered surrounded if it is not connected to any border of the matrix.
+Two 'O' cells are considered connected if they are adjacent horizontally or vertically (not diagonally).
+A region of connected 'O's that touches the border (i.e., first row, last row, first column, or last column) is not surrounded and should not be changed.
+
+
+
+
+
+Approach 
+✅ BFS Approach (Three Steps):
+1. Mark All Border-Connected 'O's:
+  Traverse all 4 borders (first row, last row, first column, last column).
+  For any 'O' found on the border, start a BFS to find all 'O's connected to it (i.e., the safe region).
+  Mark all these safe 'O's as visited using a vis[][] array or any marker.
+
+2. BFS Traversal:
+  Use a queue to do level-order BFS.
+  For each popped 'O', explore all 4 directions.
+  If a neighboring cell is also an 'O' and unvisited, mark it visited and add it to the queue.
+
+3. Flip All Unvisited 'O's to 'X':
+  After the BFS is done, the vis[][] array tells you which 'O's are safe (connected to border).
+  Traverse the board again:
+  If a cell is 'O' and not visited → it’s a surrounded region → flip it to 'X'.
+
+🧠 Why This Works:
+We only preserve the 'O' cells that are connected to the border (because they can't be surrounded by definition).
+
+All other 'O's must be inside closed boundaries of 'X' — so we can safely flip them.
+
+📦 Space & Time Complexity:
+Time: O(n * m) → You scan every cell max once.
+
+Space: O(n * m) for vis[][] + O(n * m) worst-case queue size.
+
+
+
+
+
+import java.util.*;
+
+public class SurroundedRegions {
+
+    public void solve(char[][] board) {
+        int n = board.length;
+        int m = board[0].length;
+
+        Queue<int[]> q = new LinkedList<>();
+        int[][] vis = new int[n][m];
+
+        // Step 1: Push all boundary 'O's into queue
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (i == 0 || j == 0 || i == n - 1 || j == m - 1) {
+                    if (board[i][j] == 'O') {
+                        q.add(new int[]{i, j});
+                        vis[i][j] = 1;
+                    }
+                }
+            }
+        }
+
+        // Step 2: BFS from border 'O's
+        int[] drow = {-1, 0, 1, 0};
+        int[] dcol = {0, 1, 0, -1};
+
+        while (!q.isEmpty()) {
+            int[] cell = q.poll();
+            int i = cell[0];
+            int j = cell[1];
+
+            for (int k = 0; k < 4; k++) {
+                int nrow = i + drow[k];
+                int ncol = j + dcol[k];
+
+                if (nrow > 0 && nrow < n && ncol > 0 && ncol < m &&
+                    board[nrow][ncol] == 'O' && vis[nrow][ncol] == 0) {
+                    vis[nrow][ncol] = 1;
+                    q.add(new int[]{nrow, ncol});
+                }
+            }
+        }
+
+        // Step 3: Convert unvisited 'O' to 'X'
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (vis[i][j] == 0 && board[i][j] == 'O') {
+                    board[i][j] = 'X';
+                }
+            }
+        }
+    }
