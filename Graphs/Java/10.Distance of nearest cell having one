@@ -1,0 +1,67 @@
+You are given an n x m binary matrix (0s and 1s). For every cell containing 0, find the distance to the nearest cell containing 1
+(in terms of steps via up/down/left/right). Return the matrix of the same size with those distances.
+
+
+✅ BFS Approach (Multi-source BFS):
+Push all the cells with value 1 into the queue.
+Mark their distance as 0, and all others as -1 initially.
+Then use BFS to spread from 1s and calculate the minimum distance for 0s.
+
+
+
+public class NearestOneDistance {
+    public int[][] updateMatrix(int[][] mat) {
+        int rows = mat.length;
+        int cols = mat[0].length;
+
+        int[][] dist = new int[rows][cols];
+        boolean[][] visited = new boolean[rows][cols];
+
+        Queue<int[]> queue = new LinkedList<>();
+
+        // Step 1: Add all 1s to the queue
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (mat[i][j] == 1) {
+                    queue.add(new int[]{i, j});
+                    visited[i][j] = true;
+                    dist[i][j] = 0;
+                } else {
+                    dist[i][j] = -1; // initialize other cells
+                }
+            }
+        }
+
+        int[] dx = {-1, 1, 0, 0};
+        int[] dy = {0, 0, -1, 1};
+
+        // Step 2: Multi-source BFS
+        while (!queue.isEmpty()) {
+            int[] cell = queue.poll();
+            int x = cell[0], y = cell[1];
+
+            for (int d = 0; d < 4; d++) {
+                int newX = x + dx[d];
+                int newY = y + dy[d];
+
+                if (newX >= 0 && newX < rows && newY >= 0 && newY < cols
+                        && !visited[newX][newY]) {
+                    dist[newX][newY] = dist[x][y] + 1;
+                    queue.add(new int[]{newX, newY});
+                    visited[newX][newY] = true;
+                }
+            }
+        }
+
+        return dist;
+    }
+
+
+Time Complexity:
+O(n * m) where n and m are dimensions of the matrix (each cell visited once).
+
+📌 Space Complexity:
+O(n * m) for visited array and queue.
+
+
+    
