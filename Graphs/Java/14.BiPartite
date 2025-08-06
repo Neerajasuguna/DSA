@@ -79,3 +79,68 @@ public class Solution {
         adj.get(v).add(u);
     }
 }
+
+
+
+
+
+DFS Solution 
+
+import java.util.*;
+
+public class Solution {
+
+    private boolean isBipartiteDFS(int node, int[] color, List<List<Integer>> adj) {
+        for (int neighbor : adj.get(node)) {
+            if (color[neighbor] == -1) {
+                // Assign opposite color to the neighbor
+                color[neighbor] = 1 - color[node];
+                if (!isBipartiteDFS(neighbor, color, adj)) return false;
+            } else if (color[neighbor] == color[node]) {
+                // Conflict found
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isBipartite(int V, List<List<Integer>> adj) {
+        int[] color = new int[V];
+        Arrays.fill(color, -1); // All nodes initially uncolored
+
+        for (int i = 0; i < V; i++) {
+            if (color[i] == -1) {
+                color[i] = 0; // Assign first color
+                if (!isBipartiteDFS(i, color, adj)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // Test the implementation
+    public static void main(String[] args) {
+        int V = 4;
+        List<List<Integer>> adj = new ArrayList<>();
+
+        for (int i = 0; i < V; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+        addEdge(adj, 0, 2);
+        addEdge(adj, 0, 3);
+        addEdge(adj, 2, 3);
+        addEdge(adj, 3, 1);
+
+        Solution solution = new Solution();
+        boolean result = solution.isBipartite(V, adj);
+        System.out.println(result ? "1" : "0"); // Output: 0 (Not bipartite)
+    }
+
+    private static void addEdge(List<List<Integer>> adj, int u, int v) {
+        adj.get(u).add(v);
+        adj.get(v).add(u);
+    }
+}
+
