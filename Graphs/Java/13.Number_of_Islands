@@ -1,0 +1,145 @@
+
+### ✅ Problem Statement:
+
+You are given a 2D grid of 0s and 1s, where:
+
+* `1` represents land
+* `0` represents water
+
+An island is a group of connected 1s (connected 4-directionally).
+Your task is to count **distinct island shapes**, regardless of their position in the grid.
+
+---
+
+## 🔁 BFS Approach
+
+### 💡 **Approach Explanation (BFS):**
+
+1. Traverse each cell in the grid.
+2. On encountering a `1` (land) that hasn't been visited, trigger a **BFS** from that point.
+3. For each island, record its **relative positions** (difference from the base coordinates).
+4. Convert these relative coordinates to a unique string representation and store them in a `Set`.
+5. At the end, the number of unique strings in the set gives the count of **distinct island shapes**.
+
+### 📦 Why Use Relative Coordinates?
+
+To ensure positional independence. Two islands with the same shape but in different locations should be treated as the same.
+
+---
+
+### 🧪 **BFS Java Code:**
+
+```java
+import java.util.*;
+
+public class DistinctIslandsBFS {
+    public int numDistinctIslands(int[][] grid) {
+        int m = grid.length, n = grid[0].length;
+        boolean[][] visited = new boolean[m][n];
+        Set<String> uniqueIslands = new HashSet<>();
+
+        int[][] directions = {{0,1},{1,0},{0,-1},{-1,0}};
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1 && !visited[i][j]) {
+                    Queue<int[]> queue = new LinkedList<>();
+                    queue.offer(new int[]{i, j});
+                    visited[i][j] = true;
+
+                    List<String> shape = new ArrayList<>();
+                    int baseX = i, baseY = j;
+
+                    while (!queue.isEmpty()) {
+                        int[] curr = queue.poll();
+                        int x = curr[0], y = curr[1];
+
+                        shape.add((x - baseX) + "_" + (y - baseY));
+
+                        for (int[] dir : directions) {
+                            int nx = x + dir[0], ny = y + dir[1];
+                            if (nx >= 0 && ny >= 0 && nx < m && ny < n &&
+                                grid[nx][ny] == 1 && !visited[nx][ny]) {
+                                queue.offer(new int[]{nx, ny});
+                                visited[nx][ny] = true;
+                            }
+                        }
+                    }
+
+                    uniqueIslands.add(String.join(",", shape));
+                }
+            }
+        }
+
+        return uniqueIslands.size();
+    }
+}
+```
+
+---
+
+## 🌲 DFS Approach
+
+### 💡 **Approach Explanation (DFS):**
+
+1. Traverse the grid and use DFS when an unvisited `1` is found.
+2. For each DFS call, record the **relative direction path** using encoded moves (like `"D"`, `"U"`, `"L"`, `"R"`).
+3. Use `"B"` to mark backtrack.
+4. Store the full DFS traversal path for each island in a `Set` to identify unique shapes.
+
+### 📦 Why Use Move Encoding?
+
+DFS encodes how we traverse the island shape — helping distinguish different shapes formed by the same number of land cells.
+
+---
+
+### 🧪 **DFS Java Code:**
+
+```java
+import java.util.*;
+
+public class DistinctIslandsDFS {
+    public int numDistinctIslands(int[][] grid) {
+        int m = grid.length, n = grid[0].length;
+        boolean[][] visited = new boolean[m][n];
+        Set<String> uniqueIslands = new HashSet<>();
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1 && !visited[i][j]) {
+                    StringBuilder path = new StringBuilder();
+                    dfs(grid, visited, i, j, path, "S"); // Start
+                    uniqueIslands.add(path.toString());
+                }
+            }
+        }
+
+        return uniqueIslands.size();
+    }
+
+    private void dfs(int[][] grid, boolean[][] visited, int x, int y, StringBuilder path, String dir) {
+        if (x < 0 || y < 0 || x >= grid.length || y >= grid[0].length ||
+            grid[x][y] == 0 || visited[x][y]) return;
+
+        visited[x][y] = true;
+        path.append(dir);
+
+        dfs(grid, visited, x+1, y, path, "D"); // Down
+        dfs(grid, visited, x-1, y, path, "U"); // Up
+        dfs(grid, visited, x, y+1, path, "R"); // Right
+        dfs(grid, visited, x, y-1, path, "L"); // Left
+
+        path.append("B"); // Backtrack
+    }
+}
+```
+
+---
+
+## ⏱ Time & Space Complexity (Both)
+
+* **Time:** O(m × n)
+* **Space:** O(m × n) for visited array, queue/recursion stack, and shape tracking.
+
+---
+
