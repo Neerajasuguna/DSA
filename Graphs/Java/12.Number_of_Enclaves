@@ -1,0 +1,81 @@
+You’re given a 2D grid of size m x n, where:
+
+1 represents land.
+
+0 represents water.
+
+A land cell is called an enclave if it cannot reach the boundary of the grid by moving up/down/left/right through land cells.
+
+You need to return the number of enclave land cells.
+
+✅ Intuition
+Any land cell connected to the boundary is not an enclave.
+So the idea is to:
+Mark all land cells connected to the boundary using BFS.
+Then, count all land cells not visited in step 1 — they are the enclaves.
+
+Time and Space Complexity
+Time: O(m * n)
+→ We visit each cell once in the worst case.
+
+Space: O(m * n)
+→ For the visited[][] array and BFS queue.
+
+
+
+
+import java.util.*;
+
+public class Solution {
+    public int numEnclaves(int[][] grid) {
+        int m = grid.length;
+        int n = grid[0].length;
+        
+        boolean[][] visited = new boolean[m][n];
+        Queue<int[]> queue = new LinkedList<>();
+
+        // Step 1: Process all boundary land cells using a single loop
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if ((i == 0 || j == 0 || i == m - 1 || j == n - 1) &&
+                    grid[i][j] == 1 && !visited[i][j]) {
+                    queue.offer(new int[]{i, j});
+                    visited[i][j] = true;
+                }
+            }
+        }
+
+        // Directions: up, right, down, left
+        int[] dx = {-1, 0, 1, 0};
+        int[] dy = {0, 1, 0, -1};
+
+        // Step 2: BFS from boundary land cells to mark reachable land
+        while (!queue.isEmpty()) {
+            int[] curr = queue.poll();
+            int x = curr[0], y = curr[1];
+
+            for (int d = 0; d < 4; d++) {
+                int newX = x + dx[d];
+                int newY = y + dy[d];
+
+                if (newX >= 0 && newX < m && newY >= 0 && newY < n &&
+                    grid[newX][newY] == 1 && !visited[newX][newY]) {
+                    visited[newX][newY] = true;
+                    queue.offer(new int[]{newX, newY});
+                }
+            }
+        }
+
+        // Step 3: Count all land cells that were NOT visited (i.e., enclaves)
+        int enclaveCount = 0;
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                if (grid[i][j] == 1 && !visited[i][j]) {
+                    enclaveCount++;
+                }
+            }
+        }
+
+        return enclaveCount;
+    }
+}
