@@ -86,3 +86,74 @@ class Solution {
         System.out.println(result);  // Output: [2, 4, 5, 6]
     }
 }
+
+
+
+
+
+using BFS Khan Based Approach 
+Idea:
+In the original graph, a safe node is one from which all paths lead to terminal nodes.
+In the reversed graph, a terminal node becomes a source node.
+We can apply Kahn’s Topological Sort on the reversed graph starting from terminal nodes (which become sources).
+Nodes that get processed in this topological sort are safe nodes.
+
+
+
+
+import java.util.*;
+
+public class Solution {
+    public List<Integer> eventualSafeNodes(int[][] graph) {
+        int n = graph.length;
+        List<List<Integer>> revGraph = new ArrayList<>();
+        int[] outDegree = new int[n];
+
+        // Initialize reverse graph
+        for (int i = 0; i < n; i++) {
+            revGraph.add(new ArrayList<>());
+        }
+
+        // Build reverse graph and compute outDegrees
+        for (int u = 0; u < n; u++) {
+            for (int v : graph[u]) {
+                revGraph.get(v).add(u); // reverse edge
+            }
+            outDegree[u] = graph[u].length; // outdegree of original node
+        }
+
+        // Queue for BFS
+        Queue<Integer> q = new LinkedList<>();
+
+        // Add terminal nodes (out-degree = 0)
+        for (int i = 0; i < n; i++) {
+            if (outDegree[i] == 0) {
+                q.add(i);
+            }
+        }
+
+        // Array to mark safe nodes
+        boolean[] safe = new boolean[n];
+
+        // BFS
+        while (!q.isEmpty()) {
+            int node = q.poll();
+            safe[node] = true;
+            for (int neighbor : revGraph.get(node)) {
+                outDegree[neighbor]--;
+                if (outDegree[neighbor] == 0) {
+                    q.add(neighbor);
+                }
+            }
+        }
+
+        // Collect safe nodes
+        List<Integer> result = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            if (safe[i]) result.add(i);
+        }
+
+        return result;
+    }
+}
+
