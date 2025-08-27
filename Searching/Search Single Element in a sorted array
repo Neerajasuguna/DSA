@@ -1,0 +1,163 @@
+Given an array of N integers. Every number in the array except one appears twice. Find the single number in the array.
+
+Example 1:
+Input Format: arr[] = {1,1,2,2,3,3,4,5,5,6,6}
+Result: 4
+Explanation: Only the number 4 appears once in the array.
+
+Example 2:
+
+Input Format: arr[] = {1,1,3,5,5}
+Result: 3
+Explanation: Only the number 3 appears once in the array.
+
+
+
+Naive Approach(Using XOR): 
+We can simplify the above approach using the XOR operation. We need to remember 2 important properties of XOR:
+
+a ^ a = 0, XOR of two same numbers results in 0.
+a ^ 0 = a, XOR of a number with 0 always results in that number.
+Now, if we XOR all the array elements, all the duplicates will result in 0 and we will be left with a single element.
+
+Algorithm:
+We will declare an ‘ans’ variable initialized with 0.
+We will traverse the array and XOR each element with the variable ‘ans’.
+After complete traversal, the ‘ans’ variable will store the single element and we will return it.
+
+
+
+
+public class tUf {
+    public static int singleNonDuplicate(ArrayList<Integer> arr) {
+        int n = arr.size(); //size of the array.
+        int ans = 0;
+        // XOR all the elements:
+        for (int i = 0; i < n; i++) {
+            ans = ans ^ arr.get(i);
+        }
+        return ans;
+    }
+
+    public static void main(String[] args) {
+        ArrayList<Integer> arr =
+            new ArrayList<>(Arrays.asList(1, 1, 2, 2, 3, 3, 4, 5, 5, 6, 6));
+        int ans = singleNonDuplicate(arr);
+        System.out.println("The single element is: " + ans);
+    }
+}
+
+
+
+Optimal Alogiorithm
+
+
+How to check if arr[mid] i.e. the current element is the single element:
+
+A crucial observation to note is that if an element appears twice in a sequence, either the preceding or the subsequent element will also be the same. But only for the single element, this condition will not be satisfied. So, to check this, the condition will be the following:
+
+If arr[mid] != arr[mid-1] and arr[mid] != arr[mid+1]: If this condition is true for arr[mid], we can conclude arr[mid] is the single element.
+The above condition will throw errors in the following 3 cases:
+
+If the array size is 1.
+If ‘mid’ points to 0 i.e. the first index.
+If ‘mid’ points to n-1 i.e. the last index.
+Note: At the start of the algorithm, we address the above edge cases without requiring separate conditions during the check for arr[mid] inside the loop. And the search space will be from index 1 to n-2 as indices 0 and n-1 have already been checked.
+
+Resolving edge cases:
+
+If n == 1: This means the array size is 1. If the array contains only one element, we will return that element only.
+If arr[0] != arr[1]: This means the very first element of the array is the single element. So, we will return arr[0].
+If arr[n-1] != arr[n-2]: This means the last element of the array is the single element. So, we will return arr[n-1].
+How to identify the halves:
+
+# Array Split Illustration
+
+The array is divided into **left half**, a **single middle element**, and **right half**.  
+Even/Odd sequences are also indicated.
+
+| Indices | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---------|---|---|---|---|---|---|---|---|---|---|----|
+| Values  | 1 | 1 | 2 | 2 | 3 | 4 | 5 | 5 | 5 | 6 | 6  |
+| Sequence (even/odd) | (even,odd) | (even,odd) | (even,odd) | (even,odd) | (even,odd) | Single Element | (odd,even) | (odd,even) | (odd,even) | (odd,even) | (odd,even) |
+
+- **Left Half:** Indices 0 to 4 → sequences of (even, odd)  
+- **Single Element:** Index 5 → value 4 (highlighted in original image)  
+- **Right Half:** Indices 6 to 10 → sequences of (odd, even)
+
+
+
+
+
+The index sequence of the duplicate numbers in the left half is always (even, odd). That means one of the following conditions will be satisfied if we are in the left half:
+If the current index is even, the element at the next odd index will be the same as the current element.
+Similarly, If the current index is odd, the element at the preceding even index will be the same as the current element.
+The index sequence of the duplicate numbers in the right half is always (odd, even). That means one of the following conditions will be satisfied if we are in the right half:
+If the current index is even, the element at the preceding odd index will be the same as the current element.
+Similarly, If the current index is odd, the element at the next even index will be the same as the current element.
+Now, we can easily identify the left and right halves, just by checking the sequence of the current index, i, like the following:
+
+If (i % 2 == 0 and arr[i] == arr[i+1]) or (i%2 == 1 and arr[i] == arr[i-1]), we are in the left half.
+If (i % 2 == 0 and arr[i] == arr[i-1]) or (i%2 == 1 and arr[i] == arr[i+1]), we are in the right half.
+Note: In our case, the index i refers to the index ‘mid’.
+
+How to eliminate the halves:
+
+If we are in the left half of the single element, we have to eliminate this left half (i.e. low = mid+1). Because our single element appears somewhere on the right side.
+If we are in the right half of the single element, we have to eliminate this right half (i.e. high = mid-1). Because our single element appears somewhere on the left side.
+Now, we have resolved the problems and we can use the binary search accordingly.
+
+
+
+
+
+
+
+import java.util.*;
+
+public class tUf {
+    public static int singleNonDuplicate(ArrayList<Integer> arr) {
+        int n = arr.size(); // Size of the array.
+
+        // Edge cases:
+        if (n == 1)
+            return arr.get(0);
+        if (!arr.get(0).equals(arr.get(1)))
+            return arr.get(0);
+        if (!arr.get(n - 1).equals(arr.get(n - 2)))
+            return arr.get(n - 1);
+
+        int low = 1, high = n - 2;
+        while (low <= high) {
+            int mid = (low + high) / 2;
+
+            // If arr[mid] is the single element:
+            if (!arr.get(mid).equals(arr.get(mid + 1)) && !arr.get(mid).equals(arr.get(mid - 1))) {
+                return arr.get(mid);
+            }
+
+            // We are in the left:
+            if ((mid % 2 == 1 && arr.get(mid).equals(arr.get(mid - 1)))
+                    || (mid % 2 == 0 && arr.get(mid).equals(arr.get(mid + 1)))) {
+                // Eliminate the left half:
+                low = mid + 1;
+            }
+            // We are in the right:
+            else {
+                // Eliminate the right half:
+                high = mid - 1;
+            }
+        }
+
+        // Dummy return statement:
+        return -1;
+    }
+
+
+
+Time Complexity: O(logN), N = size of the given array.
+Reason: We are basically using the Binary Search algorithm.
+
+Space Complexity: O(1) as we are not using any extra space.
+
+
