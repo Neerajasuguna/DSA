@@ -1,0 +1,99 @@
+Check if a pair with given sum exists in Array
+
+
+Example 1:
+Input Format: N = 5, arr[] = {2,6,5,8,11}, target = 14
+Result: YES (for 1st variant)
+       [1, 3] (for 2nd variant)
+Explanation: arr[1] + arr[3] = 14. So, the answer is “YES” for the first variant and [1, 3] for 2nd variant.
+
+Example 2:
+Input Format: N = 5, arr[] = {2,6,5,8,11}, target = 15
+Result: NO (for 1st variant)
+	[-1, -1] (for 2nd variant)
+Explanation: There exist no such two numbers whose sum is equal to the target.
+
+
+hashMap Approach
+
+We will select the element of the array one by one using a loop(say i).
+Then we will check if the other required element(i.e. target-arr[i]) exists in the hashMap.
+If that element exists, then we will return “YES” for the first variant or we will return the current index i.e. i, and the index of the element found using map i.e. mp[target-arr[i]].
+If that element does not exist, then we will just store the current element in the hashMap along with its index. Because in the future, the current element might be a part of our answer.
+Finally, if we are out of the loop, that means there is no such pair whose sum is equal to the target. In this case, we will return either “NO” or {-1, -1} as per the variant of the question.
+
+public class tUf {
+    public static String twoSum(int n, int []arr, int target) {
+        HashMap<Integer, Integer> mpp = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            int num = arr[i];
+            int moreNeeded = target - num;
+            if (mpp.containsKey(moreNeeded)) {
+                return "YES";
+            }
+
+            mpp.put(arr[i], i);
+        }
+        return "NO";
+    }
+
+    public static void main(String args[]) {
+        int n = 5;
+        int[] arr = {2, 6, 5, 8, 11};
+        int target = 14;
+        String ans = twoSum(n, arr, target);
+        System.out.println("This is the answer for variant 1: " + ans);
+    }
+
+}
+
+
+tc- O(n)
+SC - O(n)
+
+*******optimal - two pointer********
+
+
+
+We will sort the given array first.
+Now, we will take two pointers i.e. left, which points to the first index, and right, which points to the last index.
+Now using a loop we will check the sum of arr[left] and arr[right] until left < right.
+If arr[left] + arr[right] > sum, we will decrement the right pointer.
+If arr[left] + arr[right] < sum, we will increment the left pointer.
+If arr[left] + arr[right] == sum, we will return the result.
+Finally, if no results are found we will return “No” or {-1, -1}.
+
+
+
+
+public class Main {
+    public static String twoSum(int n, int []arr, int target) {
+        Arrays.sort(arr);
+        int left = 0, right = n - 1;
+        while (left < right) {
+            int sum = arr[left] + arr[right];
+            if (sum == target) {
+                return "YES";
+            } else if (sum < target) left++;
+            else right--;
+        }
+        return "NO";
+    }
+
+    public static void main(String args[]) {
+        int n = 5;
+        int[] arr = {2, 6, 5, 8, 11};
+        int target = 14;
+        String ans = twoSum(n, arr, target);
+        System.out.println("This is the answer for variant 1: " + ans);
+
+    }
+
+} 
+
+
+
+
+
+
+TC - O(nlogn)+O(n)
