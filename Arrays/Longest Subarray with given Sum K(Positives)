@@ -1,0 +1,88 @@
+Problem Statement: Given an array and a sum k, we need to print the length of the longest subarray that sums to k.
+
+Examples
+
+Example 1:
+Input Format: N = 3, k = 5, array[] = {2,3,5}
+Result: 2
+Explanation: The longest subarray with sum 5 is {2, 3}. And its length is 2.
+
+Example 2:
+Input Format: N = 5, k = 10, array[] = {2,3,5,1,9}
+Result: 3
+Explanation: The longest subarray with sum 10 is {2, 3, 5}. And its length is 3.
+
+
+
+
+1. Prefix Sum + Hashing 
+
+First, we will declare a map to store the prefix sums and the indices.
+Then we will run a loop(say i) from index 0 to n-1(n = size of the array).
+For each index i, we will do the following:
+We will add the current element i.e. a[i] to the prefix sum.
+If the sum is equal to k, we should consider the length of the current subarray i.e. i+1. We will compare this length with the existing length and consider the maximum one.
+We will calculate the prefix sum i.e. x-k, of the remaining subarray.
+If that sum of the remaining part i.e. x-k exists in the map, we will calculate the length i.e. i-preSumMap[x-k], and consider the maximum one comparing it with the existing length we have achieved until now.
+If the sum, we got after step 3.1, does not exist in the map we will add that with the current index into the map. We are checking the map before insertion because we want the index to be as minimum as possible and so we will consider the earliest index where the sum x-k has occurred. 
+
+public static int getLongestSubarray(int []a, long k) {
+        int n = a.length; // size of the array.
+
+        Map<Long, Integer> preSumMap = new HashMap<>();
+        long sum = 0;
+        int maxLen = 0;
+        for (int i = 0; i < n; i++) {
+            //calculate the prefix sum till index i:
+            sum += a[i];
+
+            // if the sum = k, update the maxLen:
+            if (sum == k) {
+                maxLen = Math.max(maxLen, i + 1);
+            }
+
+            // calculate the sum of remaining part i.e. x-k:
+            long rem = sum - k;
+
+            //Calculate the length and update maxLen:
+            if (preSumMap.containsKey(rem)) {
+                int len = i - preSumMap.get(rem);
+                maxLen = Math.max(maxLen, len);
+            }
+
+            //Finally, update the map checking the conditions:
+            if (!preSumMap.containsKey(sum)) {
+                preSumMap.put(sum, i);
+            }
+        }
+
+        return maxLen;
+    }
+
+
+
+
+
+
+2. sliding window --- works only for positives
+
+public class LongestSubarraySumK {
+    public static int longestSubarrayWithSumK(int[] arr, int k) {
+        int left = 0, sum = 0, maxLen = 0;
+
+        for (int right = 0; right < arr.length; right++) {
+            sum += arr[right]; // expand window
+
+            // shrink if sum exceeds k
+            while (sum > k && left <= right) {
+                sum -= arr[left];
+                left++;
+            }
+
+            // check if valid subarray
+            if (sum == k) {
+                maxLen = Math.max(maxLen, right - left + 1);
+            }
+        }
+        return maxLen;
+    }
