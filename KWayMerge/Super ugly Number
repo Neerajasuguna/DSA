@@ -122,3 +122,90 @@ public class SuperUglyNumber {
         }
     }
 }
+
+
+
+
+similar but simple approach
+
+We need to generate numbers whose prime factors come only from a given set of primes.
+
+
+Key Observation
+
+If a number x is a super ugly number,
+then any multiple of it by a valid prime p (x * p)
+is also a super ugly number.
+
+✅ So from 1, we can generate:
+1 * 2 = 2, 1 * 7 = 7, 1 * 13 = 13, 1 * 19 = 19.
+
+Then from 2, we can generate:
+2*2 = 4, 2*7 = 14, 2*13 = 26, 2*19 = 38.
+
+and so on…
+
+So if we keep multiplying previously found numbers by primes,
+we can generate all super ugly numbers.
+
+⸻
+
+⚙️ The Challenge
+
+If we just generate all possible combinations and sort them,
+we’ll have huge duplicates and massive sorting cost.
+For example,
+14 can come from 2*7 and 7*2.
+
+We need a way to always pick the next smallest unique number efficiently — without sorting everything.
+
+⸻
+
+💡 The Heap Intuition
+
+That’s where the min-heap idea shines 🌟
+
+You can think of it like this:
+	1.	We already know the smallest super ugly number: 1.
+So start with heap = [1].
+	2.	The next super ugly number must be one of:
+1 * primes[i] = {2, 7, 13, 19} → put them in the heap.
+	3.	Pop the smallest from heap → 2.
+Then generate new candidates by multiplying 2 with all primes:
+2×2=4, 2×7=14, 2×13=26, 2×19=38.
+	4.	Each time we pop from the heap,
+we are certain it is the next super ugly number —
+because all future numbers are multiples of already smaller ones (hence, larger).
+
+
+
+
+
+
+
+import java.util.*;
+
+public class SuperUglyNumberHeap {
+    public static int nthSuperUglyNumber(int n, int[] primes) {
+        PriorityQueue<Long> pq = new PriorityQueue<>();
+        Set<Long> seen = new HashSet<>();
+        pq.add(1L);
+        seen.add(1L);
+
+        long ugly = 1;
+        for (int i = 0; i < n; i++) {
+            ugly = pq.poll();
+            for (int p : primes) {
+                long next = ugly * p;
+                if (seen.add(next)) pq.add(next);
+            }
+        }
+        return (int) ugly;
+    }
+
+    public static void main(String[] args) {
+        int[] primes = {2, 7, 13, 19};
+        int n = 12;
+        System.out.println(nthSuperUglyNumber(n, primes)); // Output: 32
+    }
+}
