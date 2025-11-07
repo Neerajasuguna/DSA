@@ -107,3 +107,100 @@ public class NumberOfProvincesBFS {
 }
 Time complexity is O(v*v)
 Space - O(v) ---- for visited
+
+
+
+Approach 3 — Union Find (Disjoint Set Union)
+
+This is the most elegant when you want high performance.
+
+Idea:
+
+Initially, every city is its own province.
+
+For every connection isConnected[i][j] == 1,
+union the two cities.
+
+At the end, count the number of unique parents (roots).
+
+Java Code — Union Find
+class DSU {
+    int[] parent;
+
+    DSU(int n) {
+        parent = new int[n];
+        for (int i = 0; i < n; i++) parent[i] = i;
+    }
+
+    int find(int x) {
+        if (parent[x] != x)
+            parent[x] = find(parent[x]); // path compression
+        return parent[x];
+    }
+
+    void union(int a, int b) {
+        int pa = find(a), pb = find(b);
+        if (pa != pb)
+            parent[pa] = pb;
+    }
+}
+
+public class NumberOfProvincesUF {
+    public static int findCircleNum(int[][] isConnected) {
+        int n = isConnected.length;
+        DSU dsu = new DSU(n);
+
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (isConnected[i][j] == 1)
+                    dsu.union(i, j);
+            }
+        }
+
+        Set<Integer> provinces = new HashSet<>();
+        for (int i = 0; i < n; i++)
+            provinces.add(dsu.find(i));
+
+        return provinces.size();
+    }
+
+    public static void main(String[] args) {
+        int[][] isConnected = {
+            {1, 1, 0},
+            {1, 1, 0},
+            {0, 0, 1}
+        };
+        System.out.println("Number of Provinces: " + findCircleNum(isConnected)); // Output: 2
+    }
+}
+
+
+
+Time COmplexity 
+
+
+Union and Find Operations
+
+Each union() and find() operation has a very low time cost due to two optimizations:
+
+Path Compression: Flattens the tree structure
+(makes future finds nearly O(1))
+
+Union by Rank / Size: Keeps the tree shallow
+
+Because of these optimizations,
+both operations run in amortized O(α(N)) time,
+where α(N) = inverse Ackermann function.
+
+👉 For all practical purposes, α(N) ≤ 4 even for very large N (like 10⁹).
+
+So, it’s effectively constant time.
+
+At the end, we loop once through all nodes to count unique parents:
+
+O(N)
+
+
+************The DSU approach is asymptotically O(N²),
+but faster in practice than DFS/BFS because
+union–find operations are almost constant time.************
