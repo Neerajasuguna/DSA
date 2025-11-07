@@ -86,3 +86,126 @@ If some fresh oranges remain → return -1.
 | ---------------- | ---------------- |
 | Time Complexity  | O(m × n)         |
 | Space Complexity | O(m × n) (queue) |
+
+
+
+
+
+
+Time based approach 
+
+
+import java.util.*;
+
+class Solution {
+    public int orangesRotting(int[][] grid) {
+        int m = grid.length, n = grid[0].length;
+        Queue<int[]> q = new LinkedList<>();
+        int fresh = 0;
+
+        // Step 1: Add all rotten to queue, count fresh
+        for(int i = 0; i < m; i++) {
+            for(int j = 0; j < n; j++) {
+                if(grid[i][j] == 2)
+                    q.offer(new int[]{i, j, 0});
+                else if(grid[i][j] == 1)
+                    fresh++;
+            }
+        }
+
+        int time = 0;
+        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
+
+        // Step 2: BFS Spread
+        while(!q.isEmpty()){
+            int[] cur = q.poll();
+            int r = cur[0], c = cur[1], t = cur[2];
+            time = Math.max(time, t);
+
+            for(int[] d : dirs){
+                int nr = r + d[0], nc = c + d[1];
+                if(nr >= 0 && nc >= 0 && nr < m && nc < n && grid[nr][nc] == 1){
+                    grid[nr][nc] = 2;  // rot it
+                    fresh--;
+                    q.offer(new int[]{nr, nc, t + 1});
+                }
+            }
+        }
+
+        return (fresh == 0) ? time : -1;
+    }
+}
+
+
+
+
+There are two common BFS styles:
+
+Level-based BFS (using for loop on queue size)
+
+Timestamp-based BFS (store time inside queue)
+
+
+
+What We Are Using in the Given Code
+
+We pushed each rotten orange as:
+
+q.offer(new int[]{r, c, time});
+
+
+So we already store the time in the queue entry.
+
+int[] cur = q.poll();
+int t = cur[2];  // current time
+
+
+Here time itself ensures level/layer order.
+
+So even though we have:
+
+while(!q.isEmpty())
+
+
+we are still processing levels, because time increments only when a new layer is discovered.
+
+If we did not store time, then yes — we would use Level BFS
+
+Like this:
+
+while(!q.isEmpty()) {
+    int size = q.size(); // number of rotten oranges at this minute
+    for(int i = 0; i < size; i++) {
+        int[] cur = q.poll();
+        // rot adjacent...
+    }
+    time++; // after finishing one full layer
+}
+
+
+This is the alternative valid approach.
+
+Why Time-in-Queue Approach Works Without the For Loop
+
+Because queue order guarantees:
+
+All initially rotten oranges go in first with time = 0
+
+All oranges infected by them go in with time = 1
+
+All oranges infected next go in with time = 2
+…and so on.
+
+So BFS already processes them like layers.
+
+You don’t need to manually control layers with for.
+
+
+
+
+
+Final Summary
+
+Because we stored the time inside the queue, BFS automatically handles multiple starting points and levels.
+So we do NOT need an explicit for(queue.size()).
+If we weren’t storing time, then yes, we would use the for-loop BFS.
