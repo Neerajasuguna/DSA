@@ -64,4 +64,8 @@ O(n * m) where n and m are dimensions of the matrix (each cell visited once).
 O(n * m) for visited array and queue.
 
 
+
+Is visited matrix needed ? 
+yes becuse here we are not chnaging the intial matrix , so keep track of which cell is processed , we need viisted matrix , unless  like for example in rotten oranges we are changing the 
+row or cell to rotten , so dont need vvisted matrix
     
