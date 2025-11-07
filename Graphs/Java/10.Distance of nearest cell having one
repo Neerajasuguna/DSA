@@ -2,6 +2,23 @@ You are given an n x m binary matrix (0s and 1s). For every cell containing 0, f
 (in terms of steps via up/down/left/right). Return the matrix of the same size with those distances.
 
 
+Input:
+
+grid = [
+  [0, 1, 1],
+  [1, 1, 0],
+  [0, 0, 1]
+]
+
+
+Output:
+
+[
+  [1, 0, 0],
+  [0, 0, 1],
+  [1, 1, 0]
+]
+
 ✅ BFS Approach (Multi-source BFS):
 Push all the cells with value 1 into the queue.
 Mark their distance as 0, and all others as -1 initially.
