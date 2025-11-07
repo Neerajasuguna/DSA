@@ -99,3 +99,115 @@ public class SurroundedRegions {
             }
         }
     }
+
+
+
+
+Without viisted BFS 
+
+Intuition
+
+The 'O's on the border (first/last row/column) cannot ever be surrounded.
+
+Any 'O' connected to those border 'O's is also safe (cannot be surrounded).
+
+All other 'O's are truly surrounded — change them to 'X'.
+
+So we:
+
+Step 1️⃣ → Find all 'O's on the border.
+
+Step 2️⃣ → Use DFS/BFS to mark all 'O's connected to these as safe.
+
+Step 3️⃣ → Convert all unmarked 'O' → 'X'.
+
+Step 4️⃣ → Restore all marked (safe) 'O's back to 'O'.
+import java.util.*;
+
+class Solution {
+    public void replaceSurrounded(char[][] mat) {
+        int n = mat.length;
+        int m = mat[0].length;
+
+        Queue<int[]> q = new LinkedList<>();
+        
+        // Step 1: Add all border 'O's to queue
+        for (int i = 0; i < n; i++) {
+            if (mat[i][0] == 'O') q.offer(new int[]{i, 0});
+            if (mat[i][m - 1] == 'O') q.offer(new int[]{i, m - 1});
+        }
+        for (int j = 0; j < m; j++) {
+            if (mat[0][j] == 'O') q.offer(new int[]{0, j});
+            if (mat[n - 1][j] == 'O') q.offer(new int[]{n - 1, j});
+        }
+
+        // Step 2: BFS to mark all connected 'O's as safe
+        int[][] dirs = {{1,0},{-1,0},{0,1},{0,-1}};
+        while (!q.isEmpty()) {
+            int[] cur = q.poll();
+            int r = cur[0], c = cur[1];
+            if (r < 0 || c < 0 || r >= n || c >= m || mat[r][c] != 'O') continue;
+            mat[r][c] = '#'; // mark safe temporarily
+
+            for (int[] d : dirs) {
+                int nr = r + d[0], nc = c + d[1];
+                if (nr >= 0 && nc >= 0 && nr < n && nc < m && mat[nr][nc] == 'O') {
+                    q.offer(new int[]{nr, nc});
+                }
+            }
+        }
+
+        // Step 3: Replace all remaining 'O' → 'X', and '#' → 'O'
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (mat[i][j] == 'O') mat[i][j] = 'X';
+                else if (mat[i][j] == '#') mat[i][j] = 'O';
+            }
+        }
+    }
+}
+
+
+
+
+
+DFS 
+
+class Solution {
+    public void replaceSurrounded(char[][] mat) {
+        int n = mat.length, m = mat[0].length;
+
+        // Step 1: DFS from borders
+        for (int i = 0; i < n; i++) {
+            dfs(mat, i, 0);
+            dfs(mat, i, m - 1);
+        }
+        for (int j = 0; j < m; j++) {
+            dfs(mat, 0, j);
+            dfs(mat, n - 1, j);
+        }
+
+        // Step 2: Convert surrounded 'O' → 'X', and '#' → 'O'
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (mat[i][j] == 'O') mat[i][j] = 'X';
+                else if (mat[i][j] == '#') mat[i][j] = 'O';
+            }
+        }
+    }
+
+    private void dfs(char[][] mat, int i, int j) {
+        int n = mat.length, m = mat[0].length;
+        if (i < 0 || j < 0 || i >= n || j >= m || mat[i][j] != 'O') return;
+        mat[i][j] = '#'; // mark as safe
+        dfs(mat, i + 1, j);
+        dfs(mat, i - 1, j);
+        dfs(mat, i, j + 1);
+        dfs(mat, i, j - 1);
+    }
+}
+
+
+
+
+
