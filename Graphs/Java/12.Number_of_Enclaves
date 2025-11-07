@@ -8,6 +8,19 @@ A land cell is called an enclave if it cannot reach the boundary of the grid by 
 
 You need to return the number of enclave land cells.
 
+
+Input:
+
+grid = [
+  [0,0,0,0],
+  [1,0,1,0],
+  [0,1,1,0],
+  [0,0,0,0]
+]
+
+
+Output: 3
+
 ✅ Intuition
 Any land cell connected to the boundary is not an enclave.
 So the idea is to:
