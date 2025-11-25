@@ -1,7 +1,7 @@
-AllOne Data Structure – O(1) Design (String + Count)
+**AllOne Data Structure – O(1) Design (String + Count)**
 Problem
 
-Design a data structure that supports the following operations in O(1) time:
+**Design a data structure that supports the following operations in O(1) time:**
 
 inc(String key)
 
@@ -39,13 +39,13 @@ O(1) update of counts for a key
 
 O(1) access to min and max count keys
 
-Data Structures
+**Data Structures**
 
-Doubly Linked List of Buckets
+**Doubly Linked List of Buckets**
 
-Each bucket represents a count and holds all keys having that count.
+**Each bucket represents a count and holds all keys having that count.**
 
-head <-> [count=1: {k1, k2}] <-> [count=2: {k3}] <-> [count=5: {k4, k5}] <-> tail
+**head <-> [count=1: {k1, k2}] <-> [count=2: {k3}] <-> [count=5: {k4, k5}] <-> tail**
 
 
 Each bucket node:
@@ -70,7 +70,7 @@ Allows us to find and move a key in O(1).
 
 Key Operations (High Level)
 
-inc(key):
+**inc(key):**
 
 If key is new:
 
@@ -82,7 +82,7 @@ Move it to bucket with count c+1 (create if needed next to current).
 
 Remove from old bucket; delete bucket if empty.
 
-dec(key):
+**dec(key):**
 
 If key doesn’t exist → do nothing.
 
@@ -96,13 +96,13 @@ Move it to bucket with count c-1 (create if needed before current).
 
 If old bucket becomes empty → remove bucket.
 
-getMaxKey():
+**getMaxKey():**
 
 If no bucket → return "".
 
 Else, return any key from tail.prev.keys.
 
-getMinKey():
+**getMinKey():**
 
 If no bucket → return "".
 
