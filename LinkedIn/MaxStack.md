@@ -75,7 +75,6 @@ pop()	Remove tail node from DLL and TreeMap in O(log n)
 top()	Return tail node’s value (O(1))
 peekMax()	Return map.lastKey() (O(log n))
 popMax()	Get map.lastKey(), remove latest node in its list, unlink from DLL (O(log n))
-💻 Java Implementation
 import java.util.*;
 
 class MaxStack {
@@ -148,6 +147,7 @@ class MaxStack {
         if (list.isEmpty()) map.remove(node.val);
     }
 }
+
 
 🧩 Example Usage
 MaxStack st = new MaxStack();
