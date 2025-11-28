@@ -1,4 +1,4 @@
-Below is a **clean, interview-ready** explanation of **DFS tree traversals** — **Preorder, Inorder, Postorder** — with **brief intuition**, **Java code**, and **time & space complexities**.
+
 
 ---
 
