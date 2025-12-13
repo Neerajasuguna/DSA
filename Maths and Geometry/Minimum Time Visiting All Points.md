@@ -43,37 +43,40 @@ You should use as many diagonal moves as possible
 Once one direction finishes, continue with straight moves
 
 
-********java Solution************
-public static int minTimeToVisitAllPoints(int[][] points) {
+```java
+    public static int minTimeToVisitAllPoints(int[][] points) {
         int result = 0;
+    
         for (int i = 1; i < points.length; i++) {
             int xDiff = Math.abs(points[i][0] - points[i - 1][0]);
             int yDiff = Math.abs(points[i][1] - points[i - 1][1]);
             result += Math.max(xDiff, yDiff);
         }
+    
         return result;
     }
 
-********Follow Up **********
 
-what if  only straight movemetnts are allowed and not the Diagonal Moves?
-
-Key Insight (Straight movement only)
-
-Since you cannot reduce x and y together, you must:
-
-Finish horizontal movement
-
-Finish vertical movement
-
-So the time becomes the sum of distances, not the max.
-
-📐 Distance Formula (Straight moves only)
-
-From point
-(x1, y1) → (x2, y2):
-
-time = |x2 − x1| + |y2 − y1|
+ ********Follow Up **********
+ 
+ what if  only straight movemetnts are allowed and not the Diagonal Moves?
+ 
+ Key Insight (Straight movement only)
+ 
+ Since you cannot reduce x and y together, you must:
+ 
+ Finish horizontal movement
+ 
+ Finish vertical movement
+ 
+ So the time becomes the sum of distances, not the max.
+ 
+ 📐 Distance Formula (Straight moves only)
+ 
+ From point
+ (x1, y1) → (x2, y2):
+ 
+ time = |x2 − x1| + |y2 − y1|
 
 
 **********This is called Manhattan distance.***********
