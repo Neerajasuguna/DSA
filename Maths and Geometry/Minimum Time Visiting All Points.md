@@ -77,15 +77,3 @@ time = |x2 − x1| + |y2 − y1|
 
 
 **********This is called Manhattan distance.***********
-    
-
-
-
-
-
-
-
-
-
-
-
