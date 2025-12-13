@@ -80,3 +80,17 @@ Once one direction finishes, continue with straight moves
 
 
 **********This is called Manhattan distance.***********
+
+
+
+Note : Distance between two points
+dx= |x2 − x1|   dy = |y2 − y1|
+Movement Allowed	      Distance Formula
+Diagonal + Straight	   max(dx, dy)
+Only Straight	         dx + dy
+
+🧠 Mnemonic
+
+Diagonal allowed → MAX
+
+No diagonal → SUM
