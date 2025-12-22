@@ -60,3 +60,23 @@
 | BFS / Tree traversal      | `ArrayDeque`          | Cache friendly      |
 | Top-K problems            | `PriorityQueue`       | O(log n) ops        |
 | Stack replacement         | `ArrayDeque`          | Faster than `Stack` |
+
+
+
+
+
+Best Way to implement Stack  is using Array Deque 
+        **Deque<Integer> stack = new ArrayDeque<>();**
+        Queue<Intger>stack =new ArrayDeque<<>() ////// this is wrong as Queue doesnt support peekLast(), pushLast()....
+         
+        You can implement a stack using either end of Deque:
+        
+        Top = front → use push() / pop() / peek()
+        
+        Top = back → use offerLast() / pollLast() / peekLast()
+        
+        Both give O(1) operations.
+
+
+
+        
