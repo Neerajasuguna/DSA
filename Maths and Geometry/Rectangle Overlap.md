@@ -39,3 +39,30 @@ class Solution {
 
  ----
 This solution runs in O(1) time and uses O(1) extra space, making it optimal for checking rectangle overlap.
+
+
+
+Solution 2
+
+
+ public boolean isRectangleOverlap(int[] rec1, int[] rec2) 
+    {
+        return (
+            Math.min(rec1[2], rec2[2]) > Math.max(rec1[0], rec2[0]) &&  // Check width overlap
+            Math.min(rec1[3], rec2[3]) > Math.max(rec1[1], rec2[1])     // Check height overlap
+        );
+    }
+
+
+rec1= {x1,y1,x2,y2}
+rec2={x2,y2,x3,y3}
+
+Width overlap  if( min(x2,x3)>max(x1,x2) --------> comparison with first and third indices ----> width = max(0,  min(x2,x3)-max(x1,x2) 
+Height Overlap  if( min(y2,y3) >max(y1,y2). --------> comparision with second and fouth indices ------> Height = max(0, min(y2,y3) - max(y1,y2) )
+
+Overlapping area = width * height
+
+
+
+
+
