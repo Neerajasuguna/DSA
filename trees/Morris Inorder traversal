@@ -75,3 +75,78 @@ public:
         return temp;
     }
 };
+
+
+
+
+
+
+
+java
+
+
+import java.util.*;
+
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+
+    TreeNode(int val) {
+        this.val = val;
+    }
+}
+
+class Solution {
+
+    public List<Integer> inorderTraversal(TreeNode root) {
+
+        List<Integer> res = new ArrayList<>();
+
+        TreeNode curr = root;
+
+        while (curr != null) {
+
+            // Case 1: No left child
+            if (curr.left == null) {
+
+                res.add(curr.val);
+                curr = curr.right;
+
+            } else {
+
+                // Find inorder predecessor
+                TreeNode predecessor =
+                    findInorderPredecessor(curr.left, curr);
+
+                // Case 2: Create temporary thread
+                if (predecessor.right == null) {
+
+                    predecessor.right = curr;
+                    curr = curr.left;
+
+                } else {
+
+                    // Case 3: Remove temporary thread
+                    predecessor.right = null;
+
+                    res.add(curr.val);
+                    curr = curr.right;
+                }
+            }
+        }
+
+        return res;
+    }
+
+    private TreeNode findInorderPredecessor(
+        TreeNode temp, TreeNode curr) {
+
+        while (temp.right != null && temp.right != curr) {
+            temp = temp.right;
+        }
+
+        return temp;
+    }
+}
+
